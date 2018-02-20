@@ -1,3 +1,4 @@
+// Package file is a file source. Expected format is json
 package file
 
 import (

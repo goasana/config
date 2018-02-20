@@ -1,3 +1,4 @@
+// Package memory is a memory source
 package memory
 
 import (
