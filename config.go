@@ -7,32 +7,20 @@ import (
 
 // Config is an interface abstraction for dynamic configuration
 type Config interface {
-	// Config values
-	Values
-	// Config options
-	Options() Options
-	// Watch for changes
-	Watch(path ...string) (Watcher, error)
-	// Render config unusable
 	Close() error
-	// String name of config
-	String() string
+	Load(source ...Source) error
+	Watch(path ...string) (Watcher, error)
+	Values
 }
 
 // Values is the interface for accessing config
 // "path" could be a nested structure so it's composable
 type Values interface {
-	// Get cached value
 	Get(path ...string) Value
-	// Sets internal cached value
-	Set(val interface{}, path ...string)
-	// Deletes internal cached value
-	Del(path ...string)
-	// Returns vals as bytes
 	Bytes() []byte
 }
 
-// Represent a value retrieved from the values loaded
+// Value represents a value of any type
 type Value interface {
 	Bool(def bool) bool
 	Int(def int) int
@@ -45,15 +33,14 @@ type Value interface {
 	Bytes() []byte
 }
 
-// Source is the source from which config is loaded.
-// This may be a file, a url, consul, env vars, etc.
+// Source is the source from which config loaded
 type Source interface {
 	// Loads ChangeSet from the source
 	Read() (*ChangeSet, error)
 	// Watch for source changes
 	// Returns the entire changeset
 	Watch() (SourceWatcher, error)
-	// Name of source
+	// Name of source; env, file, consul
 	String() string
 }
 
@@ -63,26 +50,13 @@ type Watcher interface {
 	Stop() error
 }
 
-// SourceWatcher allows you to watch a source for changes
-// Next is a blocking call which returns the next
-// ChangeSet update. Stop Renders the watcher unusable.
+// SourceWatcher watches a source for changes
 type SourceWatcher interface {
 	Next() (*ChangeSet, error)
 	Stop() error
 }
 
-// Reader takes a ChangeSet from a source and returns a single
-// merged ChangeSet e.g reads ChangeSet as JSON and can merge down
-type Reader interface {
-	// Parse ChangeSets
-	Parse(...*ChangeSet) (*ChangeSet, error)
-	// As values
-	Values(*ChangeSet) (Values, error)
-	// Name of parser; json
-	String() string
-}
-
-// ChangeSet represents a set an actual source
+// ChangeSet is a set of changes from a source
 type ChangeSet struct {
 	// The time at which the last change occured
 	Timestamp time.Time
@@ -90,7 +64,7 @@ type ChangeSet struct {
 	Data []byte
 	// Hash of the source data
 	Checksum string
-	// The source of this change; file, consul, etcd
+	// The source of this change
 	Source string
 }
 
