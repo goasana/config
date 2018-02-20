@@ -1,3 +1,4 @@
+// Package reader parses change sets and provides config values
 package reader
 
 import (
