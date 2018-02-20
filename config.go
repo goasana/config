@@ -8,16 +8,10 @@ import (
 // Config is an interface abstraction for dynamic configuration
 type Config interface {
 	Close() error
+	Bytes() []byte
+	Get(path ...string) Value
 	Load(source ...Source) error
 	Watch(path ...string) (Watcher, error)
-	Values
-}
-
-// Values is the interface for accessing config
-// "path" could be a nested structure so it's composable
-type Values interface {
-	Get(path ...string) Value
-	Bytes() []byte
 }
 
 // Value represents a value of any type
@@ -35,12 +29,8 @@ type Value interface {
 
 // Source is the source from which config loaded
 type Source interface {
-	// Loads ChangeSet from the source
 	Read() (*ChangeSet, error)
-	// Watch for source changes
-	// Returns the entire changeset
 	Watch() (SourceWatcher, error)
-	// Name of source; env, file, consul
 	String() string
 }
 
@@ -58,13 +48,9 @@ type SourceWatcher interface {
 
 // ChangeSet is a set of changes from a source
 type ChangeSet struct {
-	// The time at which the last change occured
-	Timestamp time.Time
-	// The raw data set for the change
 	Data []byte
-	// Hash of the source data
 	Checksum string
-	// The source of this change
+	Updated time.Time
 	Source string
 }
 
