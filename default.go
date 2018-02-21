@@ -193,17 +193,19 @@ func (c *config) sync() {
 // reload reads the sets and creates new values
 func (c *config) reload() {
 	c.Lock()
-	defer c.Unlock()
 
 	// merge sets
 	set, err := c.opts.Reader.Parse(c.sets...)
 	if err != nil {
+		c.Unlock()
 		return
 	}
 
 	// set values
 	c.vals, _ = c.opts.Reader.Values(set)
 	c.set = set
+
+	c.Unlock()
 
 	// update watchers
 	c.update()
