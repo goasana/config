@@ -38,9 +38,7 @@ Assuming the following config file
 }
 ```
 
-```go
-import "github.com/micro/go-config"
-```
+### Read File
 
 ```go
 type Host struct {
