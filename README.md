@@ -44,6 +44,8 @@ type ChangeSet struct {
 
 Sources should return config in JSON format to operate with the default config reader
 
+The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) defaults to json but can be swapped out to any other format.
+
 ```
 {
 	"path": {
