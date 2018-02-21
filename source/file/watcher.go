@@ -7,14 +7,14 @@ import (
 	"gopkg.in/fsnotify.v1"
 )
 
-type Watcher struct {
-	f *File
+type watcher struct {
+	f *file
 
 	fw   *fsnotify.Watcher
 	exit chan bool
 }
 
-func newWatcher(f *File) (*Watcher, error) {
+func newWatcher(f *file) (source.Watcher, error) {
 	fw, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
@@ -22,14 +22,14 @@ func newWatcher(f *File) (*Watcher, error) {
 
 	fw.Add(f.path)
 
-	return &Watcher{
+	return &watcher{
 		f:    f,
 		fw:   fw,
 		exit: make(chan bool),
 	}, nil
 }
 
-func (w *Watcher) Next() (*source.ChangeSet, error) {
+func (w *watcher) Next() (*source.ChangeSet, error) {
 	// is it closed?
 	select {
 	case <-w.exit:
@@ -52,6 +52,6 @@ func (w *Watcher) Next() (*source.ChangeSet, error) {
 	}
 }
 
-func (w *Watcher) Stop() error {
+func (w *watcher) Stop() error {
 	return w.fw.Close()
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/micro/go-config/source"
 )
 
-type File struct {
+type file struct {
 	path string
 	opts source.Options
 }
@@ -19,7 +19,7 @@ var (
 	DefaultPath = "config.json"
 )
 
-func (f *File) Read() (*source.ChangeSet, error) {
+func (f *file) Read() (*source.ChangeSet, error) {
 	fh, err := os.Open(f.path)
 	if err != nil {
 		return nil, err
@@ -47,18 +47,18 @@ func (f *File) Read() (*source.ChangeSet, error) {
 	}, nil
 }
 
-func (f *File) String() string {
+func (f *file) String() string {
 	return "file"
 }
 
-func (f *File) Watch() (source.Watcher, error) {
+func (f *file) Watch() (source.Watcher, error) {
 	if _, err := os.Stat(f.path); err != nil {
 		return nil, err
 	}
 	return newWatcher(f)
 }
 
-func NewSource(opts ...source.Option) *File {
+func NewSource(opts ...source.Option) source.Source {
 	var options source.Options
 	for _, o := range opts {
 		o(&options)
@@ -70,5 +70,5 @@ func NewSource(opts ...source.Option) *File {
 			path = f
 		}
 	}
-	return &File{opts: options, path: path}
+	return &file{opts: options, path: path}
 }

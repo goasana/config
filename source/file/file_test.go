@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestFile(t *testing.T) {
+func Testfile(t *testing.T) {
 	data := []byte(`{"foo": "bar"}`)
 	path := filepath.Join(os.TempDir(), fmt.Sprintf("file.%d", time.Now().UnixNano()))
 	fh, err := os.Create(path)
