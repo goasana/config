@@ -11,13 +11,13 @@ import (
 	"github.com/pborman/uuid"
 )
 
-type Source struct {
+type memory struct {
 	sync.RWMutex
 	ChangeSet *source.ChangeSet
-	Watchers  map[string]*Watcher
+	Watchers  map[string]*watcher
 }
 
-func (s *Source) Read() (*source.ChangeSet, error) {
+func (s *memory) Read() (*source.ChangeSet, error) {
 	s.RLock()
 	cs := &source.ChangeSet{
 		Timestamp: s.ChangeSet.Timestamp,
@@ -29,8 +29,8 @@ func (s *Source) Read() (*source.ChangeSet, error) {
 	return cs, nil
 }
 
-func (s *Source) Watch() (source.Watcher, error) {
-	w := &Watcher{
+func (s *memory) Watch() (source.Watcher, error) {
+	w := &watcher{
 		Id:      uuid.NewUUID().String(),
 		Updates: make(chan *source.ChangeSet, 100),
 		Source:  s,
@@ -43,7 +43,7 @@ func (s *Source) Watch() (source.Watcher, error) {
 }
 
 // Update allows manual updates of the config data.
-func (s *Source) Update(data []byte) {
+func (s *memory) Update(data []byte) {
 	// hash the file
 	h := md5.New()
 	h.Write(data)
@@ -68,11 +68,11 @@ func (s *Source) Update(data []byte) {
 	s.Unlock()
 }
 
-func (s *Source) String() string {
+func (s *memory) String() string {
 	return "memory"
 }
 
-func NewSource(opts ...source.Option) *Source {
+func NewSource(opts ...source.Option) source.Source {
 	var options source.Options
 	for _, o := range opts {
 		o(&options)
@@ -87,8 +87,8 @@ func NewSource(opts ...source.Option) *Source {
 		}
 	}
 
-	s := &Source{
-		Watchers: make(map[string]*Watcher),
+	s := &memory{
+		Watchers: make(map[string]*watcher),
 	}
 	s.Update(data)
 	return s
