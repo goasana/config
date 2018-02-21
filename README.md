@@ -66,7 +66,7 @@ conf.Get("hosts", "database").Scan(&host)
 fmt.Println(host.Address, host.Port)
 ```
 
-### Go Vals
+### Go Vals
 
 ```go
 // Get address. Set default to localhost as fallback
