@@ -40,12 +40,7 @@ Assuming the following config file
 
 ### Read File
 
-```go
-type Host struct {
-	Address string `json:"address"`
-	Port int `json:"port"`
-}
-
+```
 // Create new config
 conf := config.NewConfig()
 
@@ -53,6 +48,15 @@ conf := config.NewConfig()
 conf.Load(file.NewSource(
 	file.WithPath("/tmp/config.json"),
 ))
+```
+
+### Scan
+
+```go
+type Host struct {
+	Address string `json:"address"`
+	Port int `json:"port"`
+}
 
 var host Host
 
@@ -60,4 +64,14 @@ conf.Get("hosts", "database").Scan(&host)
 
 // 10.0.0.1 3306
 fmt.Println(host.Address, host.Port)
+```
+
+### Go Vals
+
+```go
+// Get address. Set default to localhost as fallback
+address := conf.Get("hosts", "database", "address").String("localhost")
+
+// Get port. Set default to 3000 as fallback
+port := conf.Get("hosts", "database", "port").Int(3000)
 ```
