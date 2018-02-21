@@ -3,7 +3,9 @@ package config
 
 import (
 	"context"
+	"time"
 
+	"github.com/micro/go-config/reader"
 	"github.com/micro/go-config/source"
 )
 
@@ -36,8 +38,16 @@ type Value interface {
 }
 
 type Options struct {
+	Reader reader.Reader
+	Source []source.Source
+
 	// for alternative data
 	Context context.Context
 }
 
 type Option func(o *Options)
+
+// NewConfig returns new config
+func NewConfig(opts ...Option) Config {
+	return newConfig(opts...)
+}
