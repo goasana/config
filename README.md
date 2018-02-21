@@ -5,6 +5,14 @@ Go Config is a pluggable dynamic config library
 Most configuration in application is statically configured via environment variables and config files. Hot reloading is usually left to the application or 
 built in as complex logic into frameworks. Go-config separates out the concern of dynamic config into it's own library. 
 
+## Features
+
+- Dynamic config
+- Pluggable sources
+- Source merging
+- Default values
+- Config watcher
+
 ## Config Interface
 
 The interface is very simple. It supports multiple config sources, watching and default fallback values.
