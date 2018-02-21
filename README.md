@@ -112,3 +112,24 @@ address := conf.Get("hosts", "database", "address").String("localhost")
 // Get port. Set default to 3000 as fallback
 port := conf.Get("hosts", "database", "port").Int(3000)
 ```
+
+### Watch
+
+Watch a path for changes. When the file changes the new value will be made available.
+
+```go
+w, err := conf.Watch("hosts", "database")
+if err != nil {
+	// do something
+}
+
+// wait for next value
+v, err := w.Next()
+if err != nil {
+	// do something
+}
+
+var host Host
+
+v.Scan(&host)
+```
