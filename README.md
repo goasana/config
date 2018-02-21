@@ -5,7 +5,42 @@ Go Config is a pluggable dynamic config library
 Most configuration in application is statically configured via environment variables and config files. Hot reloading is usually left to the application or 
 built in as complex logic into frameworks. Go-config separates out the concern of dynamic config into it's own library. 
 
-## Config Format
+## Config Interface
+
+The interface is very simple. It supports multiple config sources, watching and default fallback values.
+
+```go
+type Config interface {
+        Close() error
+        Bytes() []byte
+        Get(path ...string) Value
+        Load(source ...source.Source) error
+        Watch(path ...string) (Watcher, error)
+}
+```
+
+## Source
+
+A source is the source of config. It can be env vars, a file, a key value store. Anything which conforms to the Source interface.
+
+```go
+// Source is the source from which config is loaded
+type Source interface {
+	Read() (*ChangeSet, error)
+	Watch() (Watcher, error)
+	String() string
+}
+
+// ChangeSet represents a set of changes from a source
+type ChangeSet struct {
+	Data      []byte
+	Checksum  string
+	Timestamp time.Time
+	Source    string
+}
+```
+
+## Source Format
 
 Sources should return config in JSON format to operate with the default config reader
 
