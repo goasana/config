@@ -7,7 +7,7 @@ built in as complex logic into frameworks. Go-config separates out the concern o
 
 ## Config Format
 
-Sources should return config in JSON format to operate with the default config interface
+Sources should return config in JSON format to operate with the default config reader
 
 ```
 {
@@ -17,4 +17,49 @@ Sources should return config in JSON format to operate with the default config i
 		}
 	}
 }
+```
+
+## Usage
+
+Assuming the following config file
+
+```json
+{
+    "hosts": {
+        "database": {
+            "address": "10.0.0.1",
+            "port": 3306
+        },
+        "cache": {
+            "address": "10.0.0.2",
+            "port": 6379
+        }
+    }
+}
+```
+
+```go
+import "github.com/micro/go-config"
+```
+
+```go
+type Host struct {
+	Address string `json:"address"`
+	Port int `json:"port"`
+}
+
+// Create new config
+conf := config.NewConfig()
+
+// Load file source
+conf.Load(file.NewSource(
+	file.WithPath("/tmp/config.json"),
+))
+
+var host Host
+
+conf.Get("hosts", "database").Scan(&host)
+
+// 10.0.0.1 3306
+fmt.Println(host.Address, host.Port)
 ```
