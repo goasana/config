@@ -178,3 +178,10 @@ conf.Load(
 )
 ```
 
+## FAQ
+
+### How is this different from Viper?
+
+[Viper](https://github.com/spf13/viper) and go-config are solving the same problem. Go-config provides a different interface and is part of the larger micro 
+ecosystem of tooling.
+
