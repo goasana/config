@@ -29,7 +29,9 @@ type Config interface {
 
 ## Source
 
-A source is the source of config. It can be env vars, a file, a key value store. Anything which conforms to the Source interface.
+A [Source](https://godoc.org/github.com/micro/go-config/source#Source) is the source of config. 
+
+It can be env vars, a file, a key value store. Anything which conforms to the Source interface.
 
 ```go
 // Source is the source from which config is loaded
@@ -48,7 +50,7 @@ type ChangeSet struct {
 }
 ```
 
-## Source Format
+### Format
 
 Sources should return config in JSON format to operate with the default config reader
 
@@ -63,6 +65,14 @@ The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) default
 	}
 }
 ```
+
+### Sources
+
+- [envvar](https://godoc.org/github.com/micro/go-config/source/envvar) - read from environment variables
+- [file](https://godoc.org/github.com/micro/go-config/source/file) - read from file
+- [flag](https://godoc.org/github.com/micro/go-config/source/flag) - read from flags
+- [memory](https://godoc.org/github.com/micro/go-config/source/memory) - read from memory
+
 
 ## Usage
 
