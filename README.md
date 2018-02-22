@@ -13,7 +13,16 @@ built in as complex logic into frameworks. Go-config separates out the concern o
 - Default values
 - Config watcher
 
-## Config Interface
+## Sources
+
+The following sources for config are supported
+
+- [envvar](https://godoc.org/github.com/micro/go-config/source/envvar) - read from environment variables
+- [file](https://godoc.org/github.com/micro/go-config/source/file) - read from file
+- [flag](https://godoc.org/github.com/micro/go-config/source/flag) - read from flags
+- [memory](https://godoc.org/github.com/micro/go-config/source/memory) - read from memory
+
+## Interface
 
 The interface is very simple. It supports multiple config sources, watching and default fallback values.
 
@@ -32,6 +41,8 @@ type Config interface {
 A [Source](https://godoc.org/github.com/micro/go-config/source#Source) is the source of config. 
 
 It can be env vars, a file, a key value store. Anything which conforms to the Source interface.
+
+### Interface
 
 ```go
 // Source is the source from which config is loaded
@@ -66,14 +77,6 @@ The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) default
 }
 ```
 
-### Sources
-
-- [envvar](https://godoc.org/github.com/micro/go-config/source/envvar) - read from environment variables
-- [file](https://godoc.org/github.com/micro/go-config/source/file) - read from file
-- [flag](https://godoc.org/github.com/micro/go-config/source/flag) - read from flags
-- [memory](https://godoc.org/github.com/micro/go-config/source/memory) - read from memory
-
-
 ## Usage
 
 Assuming the following config file
@@ -93,9 +96,11 @@ Assuming the following config file
 }
 ```
 
-### Read File
+### Load File
 
 ```
+import "github.com/micro/go-config/source/file"
+
 // Create new config
 conf := config.NewConfig()
 
@@ -151,3 +156,24 @@ var host Host
 
 v.Scan(&host)
 ```
+
+### Merge Sources
+
+Multiple sources can be loaded and merged. Merging priority is in reverse order. 
+
+```go
+conf := config.NewConfig()
+
+
+conf.Load(
+	// base config from env
+	envvar.NewSource(),
+	// override env with flags
+	flag.NewSource(),
+	// override flags with file
+	file.NewSource(
+		file.WithPath("/tmp/config.json"),
+	),
+)
+```
+
