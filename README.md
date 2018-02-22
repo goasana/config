@@ -17,6 +17,7 @@ built in as complex logic into frameworks. Go-config separates out the concern o
 
 The following sources for config are supported
 
+- [consul](https://godoc.org/github.com/micro/go-config/source/consul) - read from consul
 - [envvar](https://godoc.org/github.com/micro/go-config/source/envvar) - read from environment variables
 - [file](https://godoc.org/github.com/micro/go-config/source/file) - read from file
 - [flag](https://godoc.org/github.com/micro/go-config/source/flag) - read from flags
