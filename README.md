@@ -22,7 +22,7 @@ The following sources for config are supported
 - [file](https://godoc.org/github.com/micro/go-config/source/file) - read from file
 - [flag](https://godoc.org/github.com/micro/go-config/source/flag) - read from flags
 - [memory](https://godoc.org/github.com/micro/go-config/source/memory) - read from memory
-- [microcli]((https://godoc.org/github.com/micro/go-config/source/microcli) - read from micro cli flags
+- [microcli](https://godoc.org/github.com/micro/go-config/source/microcli) - read from micro cli flags
 
 TODO:
 
