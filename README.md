@@ -17,12 +17,12 @@ pluggable and mergeable. You'll never have to deal with config in the same way a
 
 The following sources for config are supported
 
-- [consul](https://godoc.org/github.com/micro/go-config/source/consul) - read from consul
-- [envvar](https://godoc.org/github.com/micro/go-config/source/envvar) - read from environment variables
-- [file](https://godoc.org/github.com/micro/go-config/source/file) - read from file
-- [flag](https://godoc.org/github.com/micro/go-config/source/flag) - read from flags
-- [memory](https://godoc.org/github.com/micro/go-config/source/memory) - read from memory
-- [microcli](https://godoc.org/github.com/micro/go-config/source/microcli) - read from micro cli flags
+- [consul](https://github.com/micro/go-config/tree/master/source/consul) - read from consul
+- [envvar](https://github.com/micro/go-config/tree/master/source/envvar) - read from environment variables
+- [file](https://github.com/micro/go-config/tree/master/source/file) - read from file
+- [flag](https://github.com/micro/go-config/tree/master/source/flag) - read from flags
+- [memory](https://github.com/micro/go-config/tree/master/source/memory) - read from memory
+- [microcli](https://github.com/micro/go-config/tree/master/source/microcli) - read from micro cli flags
 
 TODO:
 
