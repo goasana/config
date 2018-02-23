@@ -13,7 +13,7 @@ micro.Flags([]cli.Flag{
     cli.StringFlag{
         Name: "database-address",
         Value: "127.0.0.1",
-        Usage: "the db address",]
+        Usage: "the db address",
     },
     cli.IntFlag{
         Name: "database-port",
@@ -48,7 +48,7 @@ func main() {
             cli.StringFlag{
                 Name: "database-address",
                 Value: "127.0.0.1",
-                Usage: "the db address",]
+                Usage: "the db address",
             },
         }),
     )
