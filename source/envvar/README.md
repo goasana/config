@@ -27,16 +27,52 @@ Becomes
 }
 ```
 
-### Namespace
+## Prefixes
 
-Env vars can be namespaced so we only have access to a subset
+Environment variables can be namespaced so we only have access to a subset. Two options are available:
 
 ```
-MICRO_DATABASE_ADDRESS=127.0.0.1
-MICRO_DATABASE_PORT=3306
+WithPrefix(p ...string)
+WithStrippedPrefix(p ...string)
 ```
 
-The prefix will be trimmed on access
+The former will preserve the prefix and make it a top level key in the config. The latter eliminates the prefix, reducing the nesting by one. 
+
+_Note: If any prefixes are provided, "MICRO" will automatically be included to support the micro tooling._
+
+#### Example:
+
+Given ENVs of:
+
+```
+APP_DATABASE_ADDRESS=127.0.0.1
+APP_DATABASE_PORT=3306
+VAULT_ADDR=vault:1337
+```
+
+and a source initialized as follows:
+
+```
+envvarsrc := envvar.NewSource(
+    envvar.WithPrefix("VAULT"),
+    envvar.WithStrippedPrefix("APP"),
+)
+```
+
+The resulting config will be:
+
+```
+{
+    "database": {
+        "address": "127.0.0.1",
+        "port": 3306
+    },
+    "vault": {
+        "addr": "vault:1337"
+    }
+}
+```
+
 
 ## New Source
 
