@@ -9,8 +9,18 @@ We expect the use of the `micro/cli` package. Upper case flags will be lower cas
 ### Example
 
 ```go
-dbAddress := flag.String("database-address", "127.0.0.1", "the db address")
-dbPort := flag.Int("database-port", 3306, "the db port)
+micro.Flags([]cli.Flag{
+    cli.StringFlag{
+        Name: "database-address",
+        Value: "127.0.0.1",
+        Usage: "the db address",]
+    },
+    cli.IntFlag{
+        Name: "database-port",
+        Value: 3306,
+        Usage: "the db port",
+    },
+})
 ```
 
 Becomes
@@ -31,16 +41,20 @@ Because a cli.Context is needed to retrieve the flags and their values, it is re
 ```go
 
 func main() {
-
     // New Service
     service := micro.NewService(
         micro.Name("example"),
         micro.Flags([]cli.Flag{
-            cli.StringFlag{Name: "database-name", Usage: "database name"},
+            cli.StringFlag{
+                Name: "database-address",
+                Value: "127.0.0.1",
+                Usage: "the db address",]
+            },
         }),
     )
 
     var clisrc source.Source
+
     service.Init(
         micro.Action(func(c *cli.Context) {
             clisrc = microcli.NewSource(c)
