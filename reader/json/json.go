@@ -60,7 +60,7 @@ func (j *jsonReader) String() string {
 	return "json"
 }
 
-// New json reader
+// NewReader creates a json reader
 func NewReader() reader.Reader {
 	return &jsonReader{}
 }
