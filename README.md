@@ -29,6 +29,7 @@ TODO:
 - etcd
 - vault
 - kubernetes config map
+- git url
 
 ## Interface
 
