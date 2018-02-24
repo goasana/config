@@ -12,21 +12,36 @@ import (
 	"github.com/micro/go-config/source"
 )
 
+var (
+	DefaultPrefixes = []string{"MICRO_"}
+)
+
 type envvar struct {
-	prefix string
-	opts   source.Options
+	prefixes         []string
+	strippedPrefixes []string
+	opts             source.Options
 }
 
 func (e *envvar) Read() (*source.ChangeSet, error) {
 	var changes map[string]interface{}
 
 	for _, env := range os.Environ() {
-		if len(e.prefix) > 0 {
-			if !strings.HasPrefix(env, e.prefix) {
-				continue
+
+		if len(e.prefixes) > 0 || len(e.strippedPrefixes) > 0 {
+			notFound := true
+
+			if _, ok := matchPrefix(e.prefixes, env); ok {
+				notFound = false
 			}
 
-			env = strings.TrimPrefix(env, e.prefix)
+			if match, ok := matchPrefix(e.strippedPrefixes, env); ok {
+				env = strings.TrimPrefix(env, match)
+				notFound = false
+			}
+
+			if notFound {
+				continue
+			}
 		}
 
 		env = strings.ToLower(env)
@@ -67,6 +82,16 @@ func (e *envvar) Read() (*source.ChangeSet, error) {
 	}, nil
 }
 
+func matchPrefix(pre []string, s string) (string, bool) {
+	for _, p := range pre {
+		if strings.HasPrefix(s, p) {
+			return p, true
+		}
+	}
+
+	return "", false
+}
+
 func reverse(ss []string) {
 	for i := len(ss)/2 - 1; i >= 0; i-- {
 		opp := len(ss) - 1 - i
@@ -101,11 +126,20 @@ func NewSource(opts ...source.Option) source.Source {
 		o(&options)
 	}
 
-	var prefix string
+	var sp []string
+	var pre []string
 	if options.Context != nil {
-		if p, ok := options.Context.Value(prefixKey{}).(string); ok {
-			prefix = p
+		if p, ok := options.Context.Value(strippedPrefixKey{}).([]string); ok {
+			sp = p
+		}
+
+		if p, ok := options.Context.Value(prefixKey{}).([]string); ok {
+			pre = p
+		}
+
+		if len(sp) > 0 || len(pre) > 0 {
+			pre = append(pre, DefaultPrefixes...)
 		}
 	}
-	return &envvar{prefix: prefix, opts: options}
+	return &envvar{prefixes: pre, strippedPrefixes: sp, opts: options}
 }

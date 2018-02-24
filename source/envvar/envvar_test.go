@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/micro/go-config/source"
 )
 
 func TestEnvvar_Read(t *testing.T) {
@@ -40,28 +42,49 @@ func TestEnvvar_Read(t *testing.T) {
 	}
 }
 
-func TestEnvvar_PrefixIgnoresOtherEnvs(t *testing.T) {
-	os.Setenv("GOMICRO_DATABASE_HOST", "localhost")
-	os.Setenv("GOMICRO_DATABASE_PASSWORD", "password")
-	source := NewSource(WithPrefix("GOMICRO_"))
+func TestEnvvar_Prefixes(t *testing.T) {
+	os.Setenv("APP_DATABASE_HOST", "localhost")
+	os.Setenv("APP_DATABASE_PASSWORD", "password")
+	os.Setenv("VAULT_ADDR", "vault:1337")
+	os.Setenv("MICRO_REGISTRY", "mdns")
 
-	c, err := source.Read()
-	if err != nil {
-		t.Error(err)
+	var prefixtests = []struct {
+		prefixOpts   []source.Option
+		expectedKeys []string
+	}{
+		{[]source.Option{WithPrefix("APP")}, []string{"app", "micro"}},
+		{[]source.Option{WithStrippedPrefix("APP")}, []string{"database", "micro"}},
+		{[]source.Option{WithStrippedPrefix("APP")}, []string{"database", "micro"}},
 	}
 
-	var actual map[string]interface{}
-	if err := json.Unmarshal(c.Data, &actual); err != nil {
-		t.Error(err)
-	}
+	for _, pt := range prefixtests {
+		source := NewSource(pt.prefixOpts...)
 
-	if l := len(actual); l != 1 {
-		t.Errorf("expected 1 top key, got %v", l)
+		c, err := source.Read()
+		if err != nil {
+			t.Error(err)
+		}
+
+		var actual map[string]interface{}
+		if err := json.Unmarshal(c.Data, &actual); err != nil {
+			t.Error(err)
+		}
+
+		// assert other prefixes ignored
+		if l := len(actual); l != len(pt.expectedKeys) {
+			t.Errorf("expected %v top keys, got %v", len(pt.expectedKeys), l)
+		}
+
+		for _, k := range pt.expectedKeys {
+			if !containsKey(actual, k) {
+				t.Errorf("expected key %v, not found", k)
+			}
+		}
 	}
 }
 
 func TestEnvvar_WatchNextNoOpsUntilStop(t *testing.T) {
-	source := NewSource(WithPrefix("GOMICRO_"))
+	source := NewSource(WithStrippedPrefix("GOMICRO_"))
 	w, err := source.Watch()
 	if err != nil {
 		t.Error(err)
@@ -75,4 +98,13 @@ func TestEnvvar_WatchNextNoOpsUntilStop(t *testing.T) {
 	if _, err := w.Next(); err.Error() != "watcher stopped" {
 		t.Errorf("expected watcher stopped error, got %v", err)
 	}
+}
+
+func containsKey(m map[string]interface{}, s string) bool {
+	for k := range m {
+		if k == s {
+			return true
+		}
+	}
+	return false
 }
