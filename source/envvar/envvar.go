@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	DefaultPrefixes = []string{"MICRO_"}
+	DefaultPrefixes = []string{}
 )
 
 type envvar struct {

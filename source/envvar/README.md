@@ -38,8 +38,6 @@ WithStrippedPrefix(p ...string)
 
 The former will preserve the prefix and make it a top level key in the config. The latter eliminates the prefix, reducing the nesting by one. 
 
-_Note: If any prefixes are provided, "MICRO" will automatically be included to support the micro tooling._
-
 #### Example:
 
 Given ENVs of:
