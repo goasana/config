@@ -1,10 +1,10 @@
 package microcli
 
 import (
-	"testing"
+	"encoding/json"
 	"github.com/micro/cli"
 	"github.com/micro/go-config/source"
-	"encoding/json"
+	"testing"
 )
 
 func TestClisrc_Read(t *testing.T) {

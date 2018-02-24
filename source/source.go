@@ -21,7 +21,7 @@ type ChangeSet struct {
 	Source    string
 }
 
-// Watches a source for changes
+// Watcher watches a source for changes
 type Watcher interface {
 	Next() (*ChangeSet, error)
 	Stop() error
