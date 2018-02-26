@@ -61,7 +61,7 @@ func newConfig(opts ...Option) Config {
 
 func (c *config) watch(idx int, s source.Source) {
 	c.Lock()
-	c.sets = append(c.sets, nil)
+	c.sets = append(c.sets, &source.ChangeSet{Source: s.String()})
 	c.Unlock()
 
 	// watches a source for changes

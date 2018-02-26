@@ -18,6 +18,10 @@ func (j *jsonReader) Parse(changes ...*source.ChangeSet) (*source.ChangeSet, err
 	var merged map[string]interface{}
 
 	for _, m := range changes {
+		if m == nil {
+			continue
+		}
+
 		if len(m.Data) == 0 {
 			m.Data = []byte(`{}`)
 		}
