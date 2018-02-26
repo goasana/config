@@ -19,7 +19,7 @@ type consul struct {
 }
 
 var (
-	DefaultPrefix = "/micro/config"
+	DefaultPrefix = "/micro/config/"
 )
 
 func (c *consul) Read() (*source.ChangeSet, error) {
@@ -32,11 +32,7 @@ func (c *consul) Read() (*source.ChangeSet, error) {
 		return nil, fmt.Errorf("source not found: %s", c.prefix)
 	}
 
-	data := make(map[string]interface{})
-
-	for _, v := range kv {
-		data[v.Key] = v.Value
-	}
+	data := makeMap(kv)
 
 	b, err := json.Marshal(data)
 	if err != nil {

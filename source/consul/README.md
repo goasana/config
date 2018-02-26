@@ -15,6 +15,12 @@ consul kv put micro/config/database '{"address": "10.0.0.1", "port": 3306}'
 consul kv put micro/config/cache '{"address": "10.0.0.2", "port": 6379}'
 ```
 
+Keys are split on `/` so access becomes
+
+```
+conf.Get("micro", "config", "database")
+```
+
 ## New Source
 
 Specify source with data

@@ -26,7 +26,7 @@ func newWatcher(key, addr, name string) (source.Watcher, error) {
 		exit: make(chan bool),
 	}
 
-	wp, err := watch.Parse(map[string]interface{}{"type": "prefix", "prefix": key})
+	wp, err := watch.Parse(map[string]interface{}{"type": "keyprefix", "prefix": key})
 	if err != nil {
 		return nil, err
 	}
@@ -47,16 +47,12 @@ func (w *watcher) handle(idx uint64, data interface{}) {
 		return
 	}
 
-	kvs, ok := data.([]*api.KVPair)
+	kvs, ok := data.(api.KVPairs)
 	if !ok {
 		return
 	}
 
-	d := make(map[string]interface{})
-
-	for _, v := range kvs {
-		d[v.Key] = v.Value
-	}
+	d := makeMap(kvs)
 
 	b, err := json.Marshal(d)
 	if err != nil {
