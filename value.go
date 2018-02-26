@@ -2,11 +2,13 @@ package config
 
 import (
 	"time"
+
+	"github.com/micro/go-config/reader"
 )
 
 type value struct{}
 
-func newValue() Value {
+func newValue() reader.Value {
 	return new(value)
 }
 

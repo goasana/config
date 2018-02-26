@@ -39,7 +39,7 @@ The interface is very simple. It supports multiple config sources, watching and 
 type Config interface {
         Close() error
         Bytes() []byte
-        Get(path ...string) Value
+        Get(path ...string) reader.Value
         Load(source ...source.Source) error
         Watch(path ...string) (Watcher, error)
 }

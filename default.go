@@ -33,8 +33,8 @@ type config struct {
 type watcher struct {
 	exit    chan bool
 	path    []string
-	value   Value
-	updates chan Value
+	value   reader.Value
+	updates chan reader.Value
 }
 
 func newConfig(opts ...Option) Config {
@@ -221,7 +221,7 @@ func (c *config) Close() error {
 	return nil
 }
 
-func (c *config) Get(path ...string) Value {
+func (c *config) Get(path ...string) reader.Value {
 	if !c.loaded() {
 		c.sync()
 	}
@@ -303,7 +303,7 @@ func (c *config) Watch(path ...string) (Watcher, error) {
 		exit:    make(chan bool),
 		path:    path,
 		value:   value,
-		updates: make(chan Value, 1),
+		updates: make(chan reader.Value, 1),
 	}
 
 	id := c.idx
@@ -322,7 +322,7 @@ func (c *config) Watch(path ...string) (Watcher, error) {
 	return w, nil
 }
 
-func (w *watcher) Next() (Value, error) {
+func (w *watcher) Next() (reader.Value, error) {
 	for {
 		select {
 		case <-w.exit:
