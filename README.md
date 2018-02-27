@@ -7,11 +7,11 @@ pluggable and mergeable. You'll never have to deal with config in the same way a
 
 ## Features
 
-- Dynamic config
-- Pluggable sources
-- Source merging
-- Default values
-- Config watcher
+- Dynamic - load config on the fly as you need it
+- Pluggable - choose which source to load from; file, envvar, consul
+- Mergeable - merge and override multiple config sources
+- Fallback - specify fallback values where keys don't exist
+- Watch - Watch the config for changes
 
 ## Sources
 
@@ -31,9 +31,11 @@ TODO:
 - kubernetes config map
 - git url
 
-## Interface
+## Config 
 
-The interface is very simple. It supports multiple config sources, watching and default fallback values.
+Top level config is an interface. It supports multiple sources, watching and fallback values.
+
+### Interface
 
 ```go
 type Config interface {
@@ -42,6 +44,24 @@ type Config interface {
         Get(path ...string) reader.Value
         Load(source ...source.Source) error
         Watch(path ...string) (Watcher, error)
+}
+```
+
+### Value
+
+The config.Get method returns a reader.Value which can cast to any type with a fallback value
+
+```go
+type Value interface {
+	Bool(def bool) bool
+	Int(def int) int
+	String(def string) string
+	Float64(def float64) float64
+	Duration(def time.Duration) time.Duration
+	StringSlice(def []string) []string
+	StringMap(def map[string]string) map[string]string
+	Scan(val interface{}) error
+	Bytes() []byte
 }
 ```
 
@@ -72,7 +92,7 @@ type ChangeSet struct {
 
 ### Format
 
-Sources should return config in JSON format to operate with the default config reader
+Sources are currently expected return config as JSON to operate with the default config reader
 
 The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) defaults to json but can be swapped out to any other format.
 
