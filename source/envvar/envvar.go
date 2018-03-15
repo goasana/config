@@ -44,10 +44,9 @@ func (e *envvar) Read() (*source.ChangeSet, error) {
 			}
 		}
 
-		env = strings.ToLower(env)
-		pair := strings.Split(env, "=")
+		pair := strings.SplitN(env, "=", 2)
 		value := pair[1]
-		keys := strings.Split(pair[0], "_")
+		keys := strings.Split(strings.ToLower(pair[0]), "_")
 		reverse(keys)
 
 		tmp := make(map[string]interface{})
