@@ -12,10 +12,11 @@ import (
 
 // Currently a single consul reader
 type consul struct {
-	prefix string
-	addr   string
-	opts   source.Options
-	client *api.Client
+	prefix      string
+	stripPrefix string
+	addr        string
+	opts        source.Options
+	client      *api.Client
 }
 
 var (
@@ -32,7 +33,7 @@ func (c *consul) Read() (*source.ChangeSet, error) {
 		return nil, fmt.Errorf("source not found: %s", c.prefix)
 	}
 
-	data := makeMap(kv)
+	data := makeMap(kv, c.stripPrefix)
 
 	b, err := json.Marshal(data)
 	if err != nil {
@@ -55,7 +56,7 @@ func (c *consul) String() string {
 }
 
 func (c *consul) Watch() (source.Watcher, error) {
-	w, err := newWatcher(c.prefix, c.addr, c.String())
+	w, err := newWatcher(c.prefix, c.addr, c.String(), c.stripPrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -91,17 +92,23 @@ func NewSource(opts ...source.Option) source.Source {
 	client, _ := api.NewClient(config)
 
 	prefix := DefaultPrefix
+	sp := ""
 	if options.Context != nil {
 		f, ok := options.Context.Value(prefixKey{}).(string)
 		if ok {
 			prefix = f
 		}
+
+		if b, ok := options.Context.Value(stripPrefixKey{}).(bool); ok && b {
+			sp = prefix
+		}
 	}
 
 	return &consul{
-		prefix: prefix,
-		addr:   config.Address,
-		opts:   options,
-		client: client,
+		prefix:      prefix,
+		stripPrefix: sp,
+		addr:        config.Address,
+		opts:        options,
+		client:      client,
 	}
 }
