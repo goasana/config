@@ -33,9 +33,12 @@ func newWatcher(key, addr, name string) (source.Watcher, error) {
 
 	wp.Handler = w.handle
 
-	if err := wp.Run(addr); err != nil {
-		return nil, err
-	}
+	// wp.Run is a blocking call and will prevent newWatcher from returning
+	go func() {
+		if err := wp.Run(addr); err != nil {
+			return
+		}
+	}()
 
 	w.wp = wp
 
