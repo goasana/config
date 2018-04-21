@@ -7,12 +7,14 @@ import (
 	"github.com/hashicorp/consul/api"
 )
 
-func makeMap(kv api.KVPairs) map[string]interface{} {
+func makeMap(kv api.KVPairs, stripPrefix string) map[string]interface{} {
 	data := make(map[string]interface{})
 
 	for _, v := range kv {
+		// remove prefix if non empty, and ensure leading / is removed as well
+		vkey := strings.TrimPrefix(strings.TrimPrefix(v.Key, stripPrefix), "/")
 		// split on prefix
-		keys := strings.Split(v.Key, "/")
+		keys := strings.Split(vkey, "/")
 
 		var vals interface{}
 		json.Unmarshal(v.Value, &vals)

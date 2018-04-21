@@ -31,6 +31,8 @@ consulSource := consul.NewSource(
 	consul.WithAddress("10.0.0.10:8500"),
 	// optionally specify prefix; defaults to /micro/config
 	consul.WithPrefix("/my/prefix"),
+  // optionally strip the provided prefix from the keys, defaults to false
+  consul.StripPrefix(true),
 )
 ```
 

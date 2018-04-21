@@ -12,18 +12,20 @@ import (
 )
 
 type watcher struct {
-	name string
+	name        string
+	stripPrefix string
 
 	wp   *watch.Plan
 	ch   chan *source.ChangeSet
 	exit chan bool
 }
 
-func newWatcher(key, addr, name string) (source.Watcher, error) {
+func newWatcher(key, addr, name string, stripPrefix string) (source.Watcher, error) {
 	w := &watcher{
-		name: name,
-		ch:   make(chan *source.ChangeSet),
-		exit: make(chan bool),
+		name:        name,
+		stripPrefix: stripPrefix,
+		ch:          make(chan *source.ChangeSet),
+		exit:        make(chan bool),
 	}
 
 	wp, err := watch.Parse(map[string]interface{}{"type": "keyprefix", "prefix": key})
@@ -52,7 +54,7 @@ func (w *watcher) handle(idx uint64, data interface{}) {
 		return
 	}
 
-	d := makeMap(kvs)
+	d := makeMap(kvs, w.stripPrefix)
 
 	b, err := json.Marshal(d)
 	if err != nil {
