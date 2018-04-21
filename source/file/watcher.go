@@ -3,8 +3,8 @@ package file
 import (
 	"errors"
 
-	"github.com/micro/go-config/source"
 	"github.com/fsnotify/fsnotify"
+	"github.com/micro/go-config/source"
 )
 
 type watcher struct {
