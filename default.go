@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -280,8 +281,17 @@ func (c *config) Bytes() []byte {
 }
 
 func (c *config) Load(sources ...source.Source) error {
+	var lastError error
+	errCnt := 0
+
 	for _, source := range sources {
-		set, _ := source.Read()
+		set, err := source.Read()
+		if err != nil {
+			lastError = err
+			errCnt++
+			// Skip this item
+			continue
+		}
 		c.Lock()
 		c.sources = append(c.sources, source)
 		c.sets = append(c.sets, set)
@@ -291,6 +301,11 @@ func (c *config) Load(sources ...source.Source) error {
 	}
 
 	c.reload()
+
+	// Return error ONLY if we failed ALL our sources
+	if errCnt != 0 && errCnt == len(sources) {
+		return fmt.Errorf("could not load any sources - last error: %v", lastError)
+	}
 	return nil
 }
 
