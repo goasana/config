@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -281,15 +282,16 @@ func (c *config) Bytes() []byte {
 }
 
 func (c *config) Load(sources ...source.Source) error {
-	var lastError error
-	errCnt := 0
+	var gerrors []string
 
 	for _, source := range sources {
 		set, err := source.Read()
 		if err != nil {
-			lastError = err
-			errCnt++
-			// Skip this item
+			gerrors = append(gerrors,
+				fmt.Sprintf("error loading source %s: %v",
+					source,
+					err))
+			// continue processing
 			continue
 		}
 		c.Lock()
@@ -302,9 +304,9 @@ func (c *config) Load(sources ...source.Source) error {
 
 	c.reload()
 
-	// Return error ONLY if we failed ALL our sources
-	if errCnt != 0 && errCnt == len(sources) {
-		return fmt.Errorf("could not load any sources - last error: %v", lastError)
+	// Return errors
+	if len(gerrors) != 0 {
+		return errors.New(strings.Join(gerrors, "\n"))
 	}
 	return nil
 }
