@@ -3,7 +3,9 @@ package config
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -280,8 +282,18 @@ func (c *config) Bytes() []byte {
 }
 
 func (c *config) Load(sources ...source.Source) error {
+	var gerrors []string
+
 	for _, source := range sources {
-		set, _ := source.Read()
+		set, err := source.Read()
+		if err != nil {
+			gerrors = append(gerrors,
+				fmt.Sprintf("error loading source %s: %v",
+					source,
+					err))
+			// continue processing
+			continue
+		}
 		c.Lock()
 		c.sources = append(c.sources, source)
 		c.sets = append(c.sets, set)
@@ -291,6 +303,11 @@ func (c *config) Load(sources ...source.Source) error {
 	}
 
 	c.reload()
+
+	// Return errors
+	if len(gerrors) != 0 {
+		return errors.New(strings.Join(gerrors, "\n"))
+	}
 	return nil
 }
 
