@@ -48,7 +48,7 @@ func (c *clisrc) Read() (*source.ChangeSet, error) {
 
 func toEntry(name string, v interface{}) map[string]interface{} {
 	n := strings.ToLower(name)
-	keys := strings.Split(n, "-")
+	keys := strings.FieldsFunc(n, split)
 	reverse(keys)
 	tmp := make(map[string]interface{})
 	for i, k := range keys {
@@ -68,6 +68,11 @@ func reverse(ss []string) {
 		ss[i], ss[opp] = ss[opp], ss[i]
 	}
 }
+
+func split(r rune) bool {
+    return r == '-' || r == '_'
+}
+
 func (c *clisrc) Watch() (source.Watcher, error) {
 	return source.NewNoopWatcher()
 }
