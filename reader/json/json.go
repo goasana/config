@@ -30,7 +30,7 @@ func (j *jsonReader) Parse(changes ...*source.ChangeSet) (*source.ChangeSet, err
 		if err := json.Unmarshal(m.Data, &data); err != nil {
 			return nil, err
 		}
-		if err := mergo.MapWithOverwrite(&merged, data); err != nil {
+		if err := mergo.Map(&merged, data, mergo.WithOverride); err != nil {
 			return nil, err
 		}
 	}
