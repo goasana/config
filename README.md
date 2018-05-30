@@ -23,12 +23,12 @@ The following sources for config are supported
 - [flag](https://github.com/micro/go-config/tree/master/source/flag) - read from flags
 - [memory](https://github.com/micro/go-config/tree/master/source/memory) - read from memory
 - [microcli](https://github.com/micro/go-config/tree/master/source/microcli) - read from micro cli flags
+- [configmap](https://github.com/micro/go-config/tree/master/source/configmap) - read from k8s configmap
 
 TODO:
 
 - etcd
 - vault
-- kubernetes config map
 - git url
 
 ## Config 
