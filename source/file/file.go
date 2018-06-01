@@ -2,8 +2,6 @@
 package file
 
 import (
-	"crypto/md5"
-	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -34,18 +32,15 @@ func (f *file) Read() (*source.ChangeSet, error) {
 		return nil, err
 	}
 
-	// hash the file
-	h := md5.New()
-	h.Write(b)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
-
-	return &source.ChangeSet{
+	cs := &source.ChangeSet{
 		Format:    format(f.path),
 		Source:    f.String(),
 		Timestamp: info.ModTime(),
 		Data:      b,
-		Checksum:  checksum,
-	}, nil
+	}
+	cs.Checksum = cs.Sum()
+
+	return cs, nil
 }
 
 func (f *file) String() string {

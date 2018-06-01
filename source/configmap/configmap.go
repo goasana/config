@@ -2,7 +2,6 @@
 package configmap
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"fmt"
 
@@ -43,16 +42,14 @@ func (k *configmap) Read() (*source.ChangeSet, error) {
 		return nil, fmt.Errorf("error reading source: %v", err)
 	}
 
-	h := md5.New()
-	h.Write(b)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
+	cs := &source.ChangeSet{
+		Format: "json",
+		Source: k.String(),
+		Data:   b,
+	}
+	cs.Checksum = cs.Sum()
 
-	return &source.ChangeSet{
-		Format:   "json",
-		Source:   k.String(),
-		Data:     b,
-		Checksum: checksum,
-	}, nil
+	return cs, nil
 }
 
 func (k *configmap) String() string {

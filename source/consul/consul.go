@@ -1,10 +1,10 @@
 package consul
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/hashicorp/consul/api"
 	"github.com/micro/go-config/source"
@@ -40,16 +40,15 @@ func (c *consul) Read() (*source.ChangeSet, error) {
 		return nil, fmt.Errorf("error reading source: %v", err)
 	}
 
-	// hash the consul
-	h := md5.New()
-	h.Write(b)
+	cs := &source.ChangeSet{
+		Timestamp: time.Now(),
+		Format:    "json",
+		Source:    c.String(),
+		Data:      b,
+	}
+	cs.Checksum = cs.Sum()
 
-	return &source.ChangeSet{
-		Format:   "json",
-		Source:   c.String(),
-		Data:     b,
-		Checksum: fmt.Sprintf("%x", h.Sum(nil)),
-	}, nil
+	return cs, nil
 }
 
 func (c *consul) String() string {

@@ -1,11 +1,9 @@
 package flag
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"flag"
-	"fmt"
 	"github.com/imdario/mergo"
 	"github.com/micro/go-config/source"
 	"strings"
@@ -46,17 +44,15 @@ func (fs *flagsrc) Read() (*source.ChangeSet, error) {
 		return nil, err
 	}
 
-	h := md5.New()
-	h.Write(b)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
-
-	return &source.ChangeSet{
+	cs := &source.ChangeSet{
 		Format:    "json",
 		Data:      b,
-		Checksum:  checksum,
 		Timestamp: time.Now(),
 		Source:    fs.String(),
-	}, nil
+	}
+	cs.Checksum = cs.Sum()
+
+	return cs, nil
 }
 
 func reverse(ss []string) {

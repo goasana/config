@@ -2,8 +2,6 @@
 package memory
 
 import (
-	"crypto/md5"
-	"fmt"
 	"sync"
 	"time"
 
@@ -50,19 +48,15 @@ func (s *memory) Update(c *source.ChangeSet) {
 	}
 
 	// hash the file
-	h := md5.New()
-	h.Write(c.Data)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
-
 	s.Lock()
 	// update changeset
 	s.ChangeSet = &source.ChangeSet{
-		Checksum:  checksum,
 		Data:      c.Data,
 		Format:    c.Format,
 		Source:    "memory",
 		Timestamp: time.Now(),
 	}
+	s.ChangeSet.Checksum = s.ChangeSet.Sum()
 
 	// update watchers
 	for _, w := range s.Watchers {
