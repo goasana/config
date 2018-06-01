@@ -45,6 +45,7 @@ func (c *consul) Read() (*source.ChangeSet, error) {
 	h.Write(b)
 
 	return &source.ChangeSet{
+		Format:   "json",
 		Source:   c.String(),
 		Data:     b,
 		Checksum: fmt.Sprintf("%x", h.Sum(nil)),

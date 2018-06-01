@@ -39,6 +39,7 @@ func (c *clisrc) Read() (*source.ChangeSet, error) {
 	checksum := fmt.Sprintf("%x", h.Sum(nil))
 
 	return &source.ChangeSet{
+		Format:    "json",
 		Data:      b,
 		Checksum:  checksum,
 		Timestamp: time.Now(),

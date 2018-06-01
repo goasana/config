@@ -40,6 +40,7 @@ func (f *file) Read() (*source.ChangeSet, error) {
 	checksum := fmt.Sprintf("%x", h.Sum(nil))
 
 	return &source.ChangeSet{
+		Format:    format(f.path),
 		Source:    f.String(),
 		Timestamp: info.ModTime(),
 		Data:      b,

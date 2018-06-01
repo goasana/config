@@ -70,6 +70,7 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 	checksum := fmt.Sprintf("%x", h.Sum(nil))
 
 	w.ch <- &source.ChangeSet{
+		Format:   "json",
 		Source:   w.name,
 		Data:     b,
 		Checksum: checksum,

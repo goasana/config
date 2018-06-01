@@ -65,6 +65,7 @@ func (w *watcher) handle(idx uint64, data interface{}) {
 	checksum := fmt.Sprintf("%x", h.Sum(nil))
 
 	w.ch <- &source.ChangeSet{
+		Format:   "json",
 		Source:   w.name,
 		Data:     b,
 		Checksum: checksum,

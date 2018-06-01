@@ -1,19 +1,32 @@
 package memory
 
 import (
-	"github.com/micro/go-config/source"
-
 	"context"
+
+	"github.com/micro/go-config/source"
 )
 
-type dataKey struct{}
+type changeSetKey struct{}
 
-// WithData allows the source data to be set
-func WithData(d []byte) source.Option {
+// WithChangeSet allows a changeset to be set
+func WithChangeSet(cs *source.ChangeSet) source.Option {
 	return func(o *source.Options) {
 		if o.Context == nil {
 			o.Context = context.Background()
 		}
-		o.Context = context.WithValue(o.Context, dataKey{}, d)
+		o.Context = context.WithValue(o.Context, changeSetKey{}, cs)
+	}
+}
+
+// WithData allows the source data to be set
+func WithData(d []byte, format string) source.Option {
+	return func(o *source.Options) {
+		if o.Context == nil {
+			o.Context = context.Background()
+		}
+		o.Context = context.WithValue(o.Context, changeSetKey{}, &source.ChangeSet{
+			Data:   d,
+			Format: format,
+		})
 	}
 }

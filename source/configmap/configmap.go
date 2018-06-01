@@ -14,6 +14,7 @@ import (
 type configmap struct {
 	opts       source.Options
 	client     *kubernetes.Clientset
+	cerr	error
 	name       string
 	namespace  string
 	configPath string
@@ -26,6 +27,10 @@ var (
 )
 
 func (k *configmap) Read() (*source.ChangeSet, error) {
+	if k.cerr != nil {
+		return nil, k.cerr
+	}
+
 	cmp, err := k.client.CoreV1().ConfigMaps(k.namespace).Get(k.name, v1.GetOptions{})
 	if err != nil {
 		return nil, err
@@ -43,6 +48,7 @@ func (k *configmap) Read() (*source.ChangeSet, error) {
 	checksum := fmt.Sprintf("%x", h.Sum(nil))
 
 	return &source.ChangeSet{
+		Format:   "json",
 		Source:   k.String(),
 		Data:     b,
 		Checksum: checksum,
@@ -54,6 +60,10 @@ func (k *configmap) String() string {
 }
 
 func (k *configmap) Watch() (source.Watcher, error) {
+	if k.cerr != nil {
+		return nil, k.cerr
+	}
+
 	w, err := newWatcher(k.name, k.namespace, k.client)
 	if err != nil {
 		return nil, err
@@ -96,12 +106,10 @@ func NewSource(opts ...source.Option) source.Source {
 	}
 
 	// TODO handle if the client fails what to do current return does not support error
-	client, _ := getClient(configPath)
-	// if err != nil {
-	// 	fmt.Errorf("unable to get the configmap client: %v", err)
-	// }
+	client, err := getClient(configPath)
 
 	return &configmap{
+		cerr: err,
 		client:     client,
 		opts:       options,
 		name:       name,

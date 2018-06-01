@@ -17,8 +17,9 @@ type Source interface {
 type ChangeSet struct {
 	Data      []byte
 	Checksum  string
-	Timestamp time.Time
+	Format    string
 	Source    string
+	Timestamp time.Time
 }
 
 // Watcher watches a source for changes
