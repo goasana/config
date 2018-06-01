@@ -14,7 +14,7 @@ import (
 type configmap struct {
 	opts       source.Options
 	client     *kubernetes.Clientset
-	cerr	error
+	cerr       error
 	name       string
 	namespace  string
 	configPath string
@@ -109,7 +109,7 @@ func NewSource(opts ...source.Option) source.Source {
 	client, err := getClient(configPath)
 
 	return &configmap{
-		cerr: err,
+		cerr:       err,
 		client:     client,
 		opts:       options,
 		name:       name,
