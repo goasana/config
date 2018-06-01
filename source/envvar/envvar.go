@@ -1,9 +1,7 @@
 package envvar
 
 import (
-	"crypto/md5"
 	"encoding/json"
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -69,16 +67,15 @@ func (e *envvar) Read() (*source.ChangeSet, error) {
 		return nil, err
 	}
 
-	h := md5.New()
-	h.Write(b)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
-
-	return &source.ChangeSet{
+	cs := &source.ChangeSet{
+		Format:    "json",
 		Data:      b,
-		Checksum:  checksum,
 		Timestamp: time.Now(),
 		Source:    e.String(),
-	}, nil
+	}
+	cs.Checksum = cs.Sum()
+
+	return cs, nil
 }
 
 func matchPrefix(pre []string, s string) (string, bool) {

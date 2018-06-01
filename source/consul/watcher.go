@@ -1,10 +1,9 @@
 package consul
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"errors"
-	"fmt"
+	"time"
 
 	"github.com/hashicorp/consul/api"
 	"github.com/hashicorp/consul/watch"
@@ -60,15 +59,15 @@ func (w *watcher) handle(idx uint64, data interface{}) {
 		return
 	}
 
-	h := md5.New()
-	h.Write(b)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
-
-	w.ch <- &source.ChangeSet{
-		Source:   w.name,
-		Data:     b,
-		Checksum: checksum,
+	cs := &source.ChangeSet{
+		Timestamp: time.Now(),
+		Format:    "json",
+		Source:    w.name,
+		Data:      b,
 	}
+	cs.Checksum = cs.Sum()
+
+	w.ch <- cs
 }
 
 func (w *watcher) Next() (*source.ChangeSet, error) {

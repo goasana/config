@@ -1,10 +1,8 @@
 package configmap
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/micro/go-config/source"
@@ -65,16 +63,15 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 		return
 	}
 
-	h := md5.New()
-	h.Write(b)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
-
-	w.ch <- &source.ChangeSet{
-		Source:   w.name,
-		Data:     b,
-		Checksum: checksum,
+	cs := &source.ChangeSet{
+		Format:    "json",
+		Source:    w.name,
+		Data:      b,
+		Timestamp: newCmp.(v12.ConfigMap).CreationTimestamp.Time,
 	}
+	cs.Checksum = cs.Sum()
 
+	w.ch <- cs
 }
 
 // Next

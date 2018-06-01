@@ -2,8 +2,6 @@
 package memory
 
 import (
-	"crypto/md5"
-	"fmt"
 	"sync"
 	"time"
 
@@ -43,20 +41,22 @@ func (s *memory) Watch() (source.Watcher, error) {
 }
 
 // Update allows manual updates of the config data.
-func (s *memory) Update(data []byte) {
-	// hash the file
-	h := md5.New()
-	h.Write(data)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
+func (s *memory) Update(c *source.ChangeSet) {
+	// don't process nil
+	if c == nil {
+		return
+	}
 
+	// hash the file
 	s.Lock()
 	// update changeset
 	s.ChangeSet = &source.ChangeSet{
-		Timestamp: time.Now(),
-		Data:      data,
-		Checksum:  checksum,
+		Data:      c.Data,
+		Format:    c.Format,
 		Source:    "memory",
+		Timestamp: time.Now(),
 	}
+	s.ChangeSet.Checksum = s.ChangeSet.Sum()
 
 	// update watchers
 	for _, w := range s.Watchers {
@@ -78,18 +78,16 @@ func NewSource(opts ...source.Option) source.Source {
 		o(&options)
 	}
 
-	var data []byte
-
-	if options.Context != nil {
-		d, ok := options.Context.Value(dataKey{}).([]byte)
-		if ok {
-			data = d
-		}
-	}
-
 	s := &memory{
 		Watchers: make(map[string]*watcher),
 	}
-	s.Update(data)
+
+	if options.Context != nil {
+		c, ok := options.Context.Value(changeSetKey{}).(*source.ChangeSet)
+		if ok {
+			s.Update(c)
+		}
+	}
+
 	return s
 }

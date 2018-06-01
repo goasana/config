@@ -1,9 +1,7 @@
 package microcli
 
 import (
-	"crypto/md5"
 	"encoding/json"
-	"fmt"
 	"github.com/imdario/mergo"
 	"github.com/micro/cli"
 	"github.com/micro/go-config/source"
@@ -34,16 +32,15 @@ func (c *clisrc) Read() (*source.ChangeSet, error) {
 		return nil, err
 	}
 
-	h := md5.New()
-	h.Write(b)
-	checksum := fmt.Sprintf("%x", h.Sum(nil))
-
-	return &source.ChangeSet{
+	cs := &source.ChangeSet{
+		Format:    "json",
 		Data:      b,
-		Checksum:  checksum,
 		Timestamp: time.Now(),
 		Source:    c.String(),
-	}, nil
+	}
+	cs.Checksum = cs.Sum()
+
+	return cs, nil
 }
 
 func toEntry(name string, v interface{}) map[string]interface{} {
@@ -70,7 +67,7 @@ func reverse(ss []string) {
 }
 
 func split(r rune) bool {
-    return r == '-' || r == '_'
+	return r == '-' || r == '_'
 }
 
 func (c *clisrc) Watch() (source.Watcher, error) {
