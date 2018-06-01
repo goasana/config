@@ -18,6 +18,8 @@ type Reader interface {
 type Values interface {
 	Bytes() []byte
 	Get(path ...string) Value
+	Map() map[string]interface{}
+	String() string
 }
 
 // Value represents a value of any type
