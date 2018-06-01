@@ -43,9 +43,10 @@ func (k *configmap) Read() (*source.ChangeSet, error) {
 	}
 
 	cs := &source.ChangeSet{
-		Format: "json",
-		Source: k.String(),
-		Data:   b,
+		Format:    "json",
+		Source:    k.String(),
+		Data:      b,
+		Timestamp: cmp.CreationTimestamp.Time,
 	}
 	cs.Checksum = cs.Sum()
 

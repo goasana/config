@@ -64,9 +64,10 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 	}
 
 	cs := &source.ChangeSet{
-		Format: "json",
-		Source: w.name,
-		Data:   b,
+		Format:    "json",
+		Source:    w.name,
+		Data:      b,
+		Timestamp: newCmp.(v12.ConfigMap).CreationTimestamp.Time,
 	}
 	cs.Checksum = cs.Sum()
 
