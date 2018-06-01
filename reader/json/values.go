@@ -66,6 +66,15 @@ func (j *jsonValues) Bytes() []byte {
 	return b
 }
 
+func (j *jsonValues) Map() map[string]interface{} {
+	m, _ := j.sj.Map()
+	return m
+}
+
+func (j *jsonValues) String() string {
+	return "json"
+}
+
 func (j *jsonValue) Bool(def bool) bool {
 	return j.Json.MustBool(def)
 }
