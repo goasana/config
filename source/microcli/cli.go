@@ -70,7 +70,7 @@ func reverse(ss []string) {
 }
 
 func split(r rune) bool {
-    return r == '-' || r == '_'
+	return r == '-' || r == '_'
 }
 
 func (c *clisrc) Watch() (source.Watcher, error) {
