@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"sync"
 	"time"
 
 	cetcd "github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/mvcc/mvccpb"
 	"github.com/micro/go-config/source"
 )
 
@@ -15,14 +15,18 @@ type watcher struct {
 	name        string
 	stripPrefix string
 
+	sync.RWMutex
+	cs *source.ChangeSet
+
 	ch   chan *source.ChangeSet
 	exit chan bool
 }
 
-func newWatcher(key, name, stripPrefix string, wc cetcd.Watcher) (source.Watcher, error) {
+func newWatcher(key, strip string, wc cetcd.Watcher, cs *source.ChangeSet) (source.Watcher, error) {
 	w := &watcher{
-		name:        name,
-		stripPrefix: stripPrefix,
+		name:        "etcd",
+		stripPrefix: strip,
+		cs:          cs,
 		ch:          make(chan *source.ChangeSet),
 		exit:        make(chan bool),
 	}
@@ -35,18 +39,27 @@ func newWatcher(key, name, stripPrefix string, wc cetcd.Watcher) (source.Watcher
 }
 
 func (w *watcher) handle(evs []*cetcd.Event) {
-	var kvs []*mvccpb.KeyValue
+	w.RLock()
+	data := w.cs.Data
+	w.RUnlock()
 
-	for _, v := range evs {
-		kvs = append(kvs, v.Kv)
+	var vals map[string]interface{}
+
+	// unpackage existing changeset
+	if err := json.Unmarshal(data, &vals); err != nil {
+		return
 	}
 
-	d := makeMap(kvs, w.stripPrefix)
+	// update base changeset
+	d := makeEvMap(vals, evs, w.stripPrefix)
 
+	// pack the changeset
 	b, err := json.Marshal(d)
 	if err != nil {
 		return
 	}
+
+	// create new changeset
 	cs := &source.ChangeSet{
 		Timestamp: time.Now(),
 		Source:    w.name,
@@ -54,6 +67,13 @@ func (w *watcher) handle(evs []*cetcd.Event) {
 		Format:    "json",
 	}
 	cs.Checksum = cs.Sum()
+
+	// set base change set
+	w.Lock()
+	w.cs = cs
+	w.Unlock()
+
+	// send update
 	w.ch <- cs
 }
 

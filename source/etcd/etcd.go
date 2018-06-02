@@ -63,11 +63,11 @@ func (c *etcd) Watch() (source.Watcher, error) {
 	if c.cerr != nil {
 		return nil, c.cerr
 	}
-	w, err := newWatcher(c.prefix, c.String(), c.stripPrefix, c.client.Watcher)
+	cs, err := c.Read()
 	if err != nil {
 		return nil, err
 	}
-	return w, nil
+	return newWatcher(c.prefix, c.stripPrefix, c.client.Watcher, cs)
 }
 
 func NewSource(opts ...source.Option) source.Source {
