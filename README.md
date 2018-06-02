@@ -18,6 +18,7 @@ pluggable and mergeable. You'll never have to deal with config in the same way a
 The following sources for config are supported
 
 - [consul](https://github.com/micro/go-config/tree/master/source/consul) - read from consul
+- [etcd](https://github.com/micro/go-config/tree/master/source/etcd) - read from etcd v3
 - [envvar](https://github.com/micro/go-config/tree/master/source/envvar) - read from environment variables
 - [file](https://github.com/micro/go-config/tree/master/source/file) - read from file
 - [flag](https://github.com/micro/go-config/tree/master/source/flag) - read from flags
@@ -27,7 +28,6 @@ The following sources for config are supported
 
 TODO:
 
-- etcd
 - vault
 - git url
 
