@@ -5,6 +5,15 @@ Go Config is a pluggable dynamic config library
 Most config in applications are statically configured or include complex logic to load from multiple sources. Go-config makes this easy, 
 pluggable and mergeable. You'll never have to deal with config in the same way again.
 
+## Getting Started
+
+- [Features](#features)
+- [Sources](#sources)
+- [Formats](#formats)
+- [Config](#config)
+- [Usage](#usage)
+- [FAQ](#faq)
+
 ## Features
 
 - Dynamic - load config on the fly as you need it
@@ -30,6 +39,23 @@ TODO:
 
 - vault
 - git url
+
+## Formats
+
+Sources are currently expected return config as JSON to operate with the default config reader
+
+The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) defaults to json but can be swapped out to any other format.
+
+```
+{
+	"path": {
+		"to": {
+			"key": ["foo", "bar"]
+		}
+	}
+}
+```
+
 
 ## Config 
 
@@ -87,22 +113,6 @@ type ChangeSet struct {
 	Checksum  string
 	Timestamp time.Time
 	Source    string
-}
-```
-
-### Format
-
-Sources are currently expected return config as JSON to operate with the default config reader
-
-The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) defaults to json but can be swapped out to any other format.
-
-```
-{
-	"path": {
-		"to": {
-			"key": ["foo", "bar"]
-		}
-	}
 }
 ```
 
