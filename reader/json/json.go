@@ -16,7 +16,7 @@ type jsonReader struct {
 	json encoder.Encoder
 }
 
-func (j *jsonReader) Parse(changes ...*source.ChangeSet) (*source.ChangeSet, error) {
+func (j *jsonReader) Merge(changes ...*source.ChangeSet) (*source.ChangeSet, error) {
 	var merged map[string]interface{}
 
 	for _, m := range changes {

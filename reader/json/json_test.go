@@ -25,7 +25,7 @@ func TestReader(t *testing.T) {
 
 	r := NewReader()
 
-	c, err := r.Parse(&source.ChangeSet{Data: data}, &source.ChangeSet{})
+	c, err := r.Merge(&source.ChangeSet{Data: data}, &source.ChangeSet{})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -81,7 +81,7 @@ func (c *config) watch(idx int, s source.Source) {
 			c.sets[idx] = cs
 
 			// merge sets
-			set, err := c.opts.Reader.Parse(c.sets...)
+			set, err := c.opts.Reader.Merge(c.sets...)
 			if err != nil {
 				return err
 			}
@@ -177,7 +177,7 @@ func (c *config) sync() {
 	}
 
 	// merge sets
-	set, err := c.opts.Reader.Parse(sets...)
+	set, err := c.opts.Reader.Merge(sets...)
 	if err != nil {
 		return
 	}
@@ -197,7 +197,7 @@ func (c *config) reload() {
 	c.Lock()
 
 	// merge sets
-	set, err := c.opts.Reader.Parse(c.sets...)
+	set, err := c.opts.Reader.Merge(c.sets...)
 	if err != nil {
 		c.Unlock()
 		return

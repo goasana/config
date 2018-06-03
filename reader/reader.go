@@ -9,7 +9,7 @@ import (
 
 // Reader is an interface for merging changesets
 type Reader interface {
-	Parse(...*source.ChangeSet) (*source.ChangeSet, error)
+	Merge(...*source.ChangeSet) (*source.ChangeSet, error)
 	Values(*source.ChangeSet) (Values, error)
 	String() string
 }
