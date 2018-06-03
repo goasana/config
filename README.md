@@ -2,8 +2,8 @@
 
 Go Config is a pluggable dynamic config library
 
-Most config in applications are statically configured or include complex logic to load from multiple sources. Go-config makes this easy, 
-pluggable and mergeable. You'll never have to deal with config in the same way again.
+Most config in applications are statically configured or include complex logic to load from multiple sources. 
+Go-config makes this easy, pluggable and mergeable. You'll never have to deal with config in the same way again.
 
 ## Features
 
@@ -42,12 +42,7 @@ TODO:
 
 ## Formats
 
-- **Encoders** are uses to handle source changeset encoding formats
-- **Readers** use encoders to decode, merge and re-encode changesets
-
-### Encoder
-
-The [`Encoder`](https://godoc.org/github.com/micro/go-config/encoder#Encoder) interface supports the following source formats:
+Encoders handle source encoding formats. The following encoding formats are supported:
 
 - json
 - yaml
@@ -55,7 +50,7 @@ The [`Encoder`](https://godoc.org/github.com/micro/go-config/encoder#Encoder) in
 - xml
 - hcl 
 
-The default encoder is JSON with expected format:
+Default encoder is json with format:
 
 ```json
 {
@@ -65,34 +60,6 @@ The default encoder is JSON with expected format:
 		}
 	}
 }
-```
-
-Encoders can be changed like so:
-
-```go
-e := yaml.NewEncoder()
-
-s := consul.NewSource(
-	source.WithEncoder(e),
-)
-```
-
-### Reader
-
-The [`Reader`](https://godoc.org/github.com/micro/go-config/reader#Reader) uses the encoders to parse configuration and merges 
-into a single format. The current default reader merges multiple changesets into a single JSON changeset.
-
-The [`Reader`](https://godoc.org/github.com/micro/go-config/reader#Reader) defaults to json but can be swapped out to anything 
-implementing it's interface.
-
-Add new encoder to a reader like so:
-
-```go
-e := yaml.NewEncoder()
-
-r := json.NewReader(
-	reader.WithEncoder(e),
-)
 ```
 
 ## Config 
@@ -131,7 +98,16 @@ type Value interface {
 
 ## Usage
 
-Assuming the following config file
+- [Sample Config](#sample-config)
+- [Load File](#load-file)
+- [Scan Value](#scan-value)
+- [Cast Value](#cast-value)
+- [Watch Path](#watch-path)
+- [Merge Sources](#merge-sources)
+- [Set Source Encoder](#set-source-encoder)
+- [Add Reader Encoder](#add-reader-encoder)
+
+### Sample Config
 
 ```json
 {
@@ -162,7 +138,7 @@ conf.Load(file.NewSource(
 ))
 ```
 
-### Scan
+### Scan Value
 
 ```go
 type Host struct {
@@ -178,7 +154,7 @@ conf.Get("hosts", "database").Scan(&host)
 fmt.Println(host.Address, host.Port)
 ```
 
-### Go Vals
+### Cast Value
 
 ```go
 // Get address. Set default to localhost as fallback
@@ -188,7 +164,7 @@ address := conf.Get("hosts", "database", "address").String("localhost")
 port := conf.Get("hosts", "database", "port").Int(3000)
 ```
 
-### Watch
+### Watch Path
 
 Watch a path for changes. When the file changes the new value will be made available.
 
@@ -226,6 +202,32 @@ conf.Load(
 	file.NewSource(
 		file.WithPath("/tmp/config.json"),
 	),
+)
+```
+
+### Set Source Encoder
+
+The default encoder is json.
+
+```go
+e := yaml.NewEncoder()
+
+s := consul.NewSource(
+	source.WithEncoder(e),
+)
+```
+
+### Add Reader Encoder
+
+The reader supports multiple encoders.
+
+Add a new encoder to a reader like so:
+
+```go
+e := yaml.NewEncoder()
+
+r := json.NewReader(
+	reader.WithEncoder(e),
 )
 ```
 
