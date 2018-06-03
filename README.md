@@ -5,26 +5,25 @@ Go Config is a pluggable dynamic config library
 Most config in applications are statically configured or include complex logic to load from multiple sources. Go-config makes this easy, 
 pluggable and mergeable. You'll never have to deal with config in the same way again.
 
+## Features
+
+- **Dynamic** - load config on the fly as you need it
+- **Pluggable** - choose which source to load from; file, envvar, consul
+- **Mergeable** - merge and override multiple config sources
+- **Fallback** - specify fallback values where keys don't exist
+- **Watch** - Watch the config for changes
+
 ## Getting Started
 
-- [Features](#features)
 - [Sources](#sources)
 - [Formats](#formats)
 - [Config](#config)
 - [Usage](#usage)
 - [FAQ](#faq)
 
-## Features
-
-- Dynamic - load config on the fly as you need it
-- Pluggable - choose which source to load from; file, envvar, consul
-- Mergeable - merge and override multiple config sources
-- Fallback - specify fallback values where keys don't exist
-- Watch - Watch the config for changes
-
 ## Sources
 
-The following sources for config are supported
+Sources are backends from which config is loaded. The following sources for config are supported.
 
 - [consul](https://github.com/micro/go-config/tree/master/source/consul) - read from consul
 - [etcd](https://github.com/micro/go-config/tree/master/source/etcd) - read from etcd v3
@@ -56,7 +55,6 @@ The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) default
 }
 ```
 
-
 ## Config 
 
 Top level config is an interface. It supports multiple sources, watching and fallback values.
@@ -75,7 +73,7 @@ type Config interface {
 
 ### Value
 
-The config.Get method returns a reader.Value which can cast to any type with a fallback value
+The `config.Get` method returns a `reader.Value` which can cast to any type with a fallback value
 
 ```go
 type Value interface {
@@ -88,31 +86,6 @@ type Value interface {
 	StringMap(def map[string]string) map[string]string
 	Scan(val interface{}) error
 	Bytes() []byte
-}
-```
-
-## Source
-
-A [Source](https://godoc.org/github.com/micro/go-config/source#Source) is the source of config. 
-
-It can be env vars, a file, a key value store. Anything which conforms to the Source interface.
-
-### Interface
-
-```go
-// Source is the source from which config is loaded
-type Source interface {
-	Read() (*ChangeSet, error)
-	Watch() (Watcher, error)
-	String() string
-}
-
-// ChangeSet represents a set of changes from a source
-type ChangeSet struct {
-	Data      []byte
-	Checksum  string
-	Timestamp time.Time
-	Source    string
 }
 ```
 
