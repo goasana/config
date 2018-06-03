@@ -1,16 +1,17 @@
 package consul
 
 import (
-	"encoding/json"
 	"errors"
 	"time"
 
 	"github.com/hashicorp/consul/api"
 	"github.com/hashicorp/consul/watch"
+	"github.com/micro/go-config/encoder"
 	"github.com/micro/go-config/source"
 )
 
 type watcher struct {
+	e           encoder.Encoder
 	name        string
 	stripPrefix string
 
@@ -19,8 +20,9 @@ type watcher struct {
 	exit chan bool
 }
 
-func newWatcher(key, addr, name string, stripPrefix string) (source.Watcher, error) {
+func newWatcher(key, addr, name, stripPrefix string, e encoder.Encoder) (source.Watcher, error) {
 	w := &watcher{
+		e:           e,
 		name:        name,
 		stripPrefix: stripPrefix,
 		ch:          make(chan *source.ChangeSet),
@@ -52,16 +54,16 @@ func (w *watcher) handle(idx uint64, data interface{}) {
 		return
 	}
 
-	d := makeMap(kvs, w.stripPrefix)
+	d := makeMap(w.e, kvs, w.stripPrefix)
 
-	b, err := json.Marshal(d)
+	b, err := w.e.Encode(d)
 	if err != nil {
 		return
 	}
 
 	cs := &source.ChangeSet{
 		Timestamp: time.Now(),
-		Format:    "json",
+		Format:    w.e.String(),
 		Source:    w.name,
 		Data:      b,
 	}

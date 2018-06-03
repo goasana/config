@@ -1,7 +1,6 @@
 package flag
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
 	"github.com/imdario/mergo"
@@ -39,13 +38,13 @@ func (fs *flagsrc) Read() (*source.ChangeSet, error) {
 		return
 	})
 
-	b, err := json.Marshal(changes)
+	b, err := fs.opts.Encoder.Encode(changes)
 	if err != nil {
 		return nil, err
 	}
 
 	cs := &source.ChangeSet{
-		Format:    "json",
+		Format:    fs.opts.Encoder.String(),
 		Data:      b,
 		Timestamp: time.Now(),
 		Source:    fs.String(),
@@ -82,10 +81,5 @@ func (fs *flagsrc) String() string {
 //          }
 //      }
 func NewSource(opts ...source.Option) source.Source {
-	var options source.Options
-	for _, o := range opts {
-		o(&options)
-	}
-
-	return &flagsrc{opts: options}
+	return &flagsrc{opts: source.NewOptions(opts...)}
 }

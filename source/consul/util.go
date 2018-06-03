@@ -1,13 +1,13 @@
 package consul
 
 import (
-	"encoding/json"
 	"strings"
 
 	"github.com/hashicorp/consul/api"
+	"github.com/micro/go-config/encoder"
 )
 
-func makeMap(kv api.KVPairs, stripPrefix string) map[string]interface{} {
+func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) map[string]interface{} {
 	data := make(map[string]interface{})
 
 	for _, v := range kv {
@@ -17,7 +17,7 @@ func makeMap(kv api.KVPairs, stripPrefix string) map[string]interface{} {
 		keys := strings.Split(vkey, "/")
 
 		var vals interface{}
-		json.Unmarshal(v.Value, &vals)
+		e.Decode(v.Value, &vals)
 
 		// set data for first iteration
 		kvals := data

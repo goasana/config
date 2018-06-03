@@ -2,7 +2,6 @@ package etcd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net"
 	"time"
@@ -38,9 +37,9 @@ func (c *etcd) Read() (*source.ChangeSet, error) {
 		return nil, fmt.Errorf("source not found: %s", c.prefix)
 	}
 
-	data := makeMap(rsp.Kvs, c.stripPrefix)
+	data := makeMap(c.opts.Encoder, rsp.Kvs, c.stripPrefix)
 
-	b, err := json.Marshal(data)
+	b, err := c.opts.Encoder.Encode(data)
 	if err != nil {
 		return nil, fmt.Errorf("error reading source: %v", err)
 	}
@@ -49,6 +48,7 @@ func (c *etcd) Read() (*source.ChangeSet, error) {
 		Timestamp: time.Now(),
 		Source:    c.String(),
 		Data:      b,
+		Format:    c.opts.Encoder.String(),
 	}
 	cs.Checksum = cs.Sum()
 
@@ -67,30 +67,24 @@ func (c *etcd) Watch() (source.Watcher, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newWatcher(c.prefix, c.stripPrefix, c.client.Watcher, cs)
+	return newWatcher(c.prefix, c.stripPrefix, c.client.Watcher, cs, c.opts)
 }
 
 func NewSource(opts ...source.Option) source.Source {
-	var options source.Options
-
-	for _, o := range opts {
-		o(&options)
-	}
+	options := source.NewOptions(opts...)
 
 	endpoints := []string{"localhost:2379"}
 
 	// check if there are any addrs
-	if options.Context != nil {
-		a, ok := options.Context.Value(addressKey{}).(string)
-		if ok {
-			addr, port, err := net.SplitHostPort(a)
-			if ae, ok := err.(*net.AddrError); ok && ae.Err == "missing port in address" {
-				port = "2379"
-				addr = a
-				endpoints = []string{fmt.Sprintf("%s:%s", addr, port)}
-			} else if err == nil {
-				endpoints = []string{fmt.Sprintf("%s:%s", addr, port)}
-			}
+	a, ok := options.Context.Value(addressKey{}).(string)
+	if ok {
+		addr, port, err := net.SplitHostPort(a)
+		if ae, ok := err.(*net.AddrError); ok && ae.Err == "missing port in address" {
+			port = "2379"
+			addr = a
+			endpoints = []string{fmt.Sprintf("%s:%s", addr, port)}
+		} else if err == nil {
+			endpoints = []string{fmt.Sprintf("%s:%s", addr, port)}
 		}
 	}
 
@@ -101,15 +95,13 @@ func NewSource(opts ...source.Option) source.Source {
 
 	prefix := DefaultPrefix
 	sp := ""
-	if options.Context != nil {
-		f, ok := options.Context.Value(prefixKey{}).(string)
-		if ok {
-			prefix = f
-		}
+	f, ok := options.Context.Value(prefixKey{}).(string)
+	if ok {
+		prefix = f
+	}
 
-		if b, ok := options.Context.Value(stripPrefixKey{}).(bool); ok && b {
-			sp = prefix
-		}
+	if b, ok := options.Context.Value(stripPrefixKey{}).(bool); ok && b {
+		sp = prefix
 	}
 
 	return &etcd{

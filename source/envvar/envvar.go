@@ -1,7 +1,6 @@
 package envvar
 
 import (
-	"encoding/json"
 	"os"
 	"strings"
 	"time"
@@ -62,13 +61,13 @@ func (e *envvar) Read() (*source.ChangeSet, error) {
 		}
 	}
 
-	b, err := json.Marshal(changes)
+	b, err := e.opts.Encoder.Encode(changes)
 	if err != nil {
 		return nil, err
 	}
 
 	cs := &source.ChangeSet{
-		Format:    "json",
+		Format:    e.opts.Encoder.String(),
 		Data:      b,
 		Timestamp: time.Now(),
 		Source:    e.String(),
@@ -117,25 +116,20 @@ func (e *envvar) String() string {
 //          }
 //      }
 func NewSource(opts ...source.Option) source.Source {
-	var options source.Options
-	for _, o := range opts {
-		o(&options)
-	}
+	options := source.NewOptions(opts...)
 
 	var sp []string
 	var pre []string
-	if options.Context != nil {
-		if p, ok := options.Context.Value(strippedPrefixKey{}).([]string); ok {
-			sp = p
-		}
+	if p, ok := options.Context.Value(strippedPrefixKey{}).([]string); ok {
+		sp = p
+	}
 
-		if p, ok := options.Context.Value(prefixKey{}).([]string); ok {
-			pre = p
-		}
+	if p, ok := options.Context.Value(prefixKey{}).([]string); ok {
+		pre = p
+	}
 
-		if len(sp) > 0 || len(pre) > 0 {
-			pre = append(pre, DefaultPrefixes...)
-		}
+	if len(sp) > 0 || len(pre) > 0 {
+		pre = append(pre, DefaultPrefixes...)
 	}
 	return &envvar{prefixes: pre, strippedPrefixes: sp, opts: options}
 }

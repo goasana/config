@@ -2,7 +2,6 @@ package etcd
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"sync"
 	"time"
@@ -12,6 +11,7 @@ import (
 )
 
 type watcher struct {
+	opts        source.Options
 	name        string
 	stripPrefix string
 
@@ -22,8 +22,9 @@ type watcher struct {
 	exit chan bool
 }
 
-func newWatcher(key, strip string, wc cetcd.Watcher, cs *source.ChangeSet) (source.Watcher, error) {
+func newWatcher(key, strip string, wc cetcd.Watcher, cs *source.ChangeSet, opts source.Options) (source.Watcher, error) {
 	w := &watcher{
+		opts:        opts,
 		name:        "etcd",
 		stripPrefix: strip,
 		cs:          cs,
@@ -46,15 +47,15 @@ func (w *watcher) handle(evs []*cetcd.Event) {
 	var vals map[string]interface{}
 
 	// unpackage existing changeset
-	if err := json.Unmarshal(data, &vals); err != nil {
+	if err := w.opts.Encoder.Decode(data, &vals); err != nil {
 		return
 	}
 
 	// update base changeset
-	d := makeEvMap(vals, evs, w.stripPrefix)
+	d := makeEvMap(w.opts.Encoder, vals, evs, w.stripPrefix)
 
 	// pack the changeset
-	b, err := json.Marshal(d)
+	b, err := w.opts.Encoder.Encode(d)
 	if err != nil {
 		return
 	}
@@ -64,7 +65,7 @@ func (w *watcher) handle(evs []*cetcd.Event) {
 		Timestamp: time.Now(),
 		Source:    w.name,
 		Data:      b,
-		Format:    "json",
+		Format:    w.opts.Encoder.String(),
 	}
 	cs.Checksum = cs.Sum()
 

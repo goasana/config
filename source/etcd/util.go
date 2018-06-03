@@ -1,14 +1,14 @@
 package etcd
 
 import (
-	"encoding/json"
 	"strings"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/coreos/etcd/mvcc/mvccpb"
+	"github.com/micro/go-config/encoder"
 )
 
-func makeEvMap(data map[string]interface{}, kv []*clientv3.Event, stripPrefix string) map[string]interface{} {
+func makeEvMap(e encoder.Encoder, data map[string]interface{}, kv []*clientv3.Event, stripPrefix string) map[string]interface{} {
 	if data == nil {
 		data = make(map[string]interface{})
 	}
@@ -16,33 +16,33 @@ func makeEvMap(data map[string]interface{}, kv []*clientv3.Event, stripPrefix st
 	for _, v := range kv {
 		switch v.Type {
 		case mvccpb.DELETE:
-			data = update(data, v.Kv, "delete", stripPrefix)
+			data = update(e, data, v.Kv, "delete", stripPrefix)
 		default:
-			data = update(data, v.Kv, "insert", stripPrefix)
+			data = update(e, data, v.Kv, "insert", stripPrefix)
 		}
 	}
 
 	return data
 }
 
-func makeMap(kv []*mvccpb.KeyValue, stripPrefix string) map[string]interface{} {
+func makeMap(e encoder.Encoder, kv []*mvccpb.KeyValue, stripPrefix string) map[string]interface{} {
 	data := make(map[string]interface{})
 
 	for _, v := range kv {
-		data = update(data, v, "put", stripPrefix)
+		data = update(e, data, v, "put", stripPrefix)
 	}
 
 	return data
 }
 
-func update(data map[string]interface{}, v *mvccpb.KeyValue, action, stripPrefix string) map[string]interface{} {
+func update(e encoder.Encoder, data map[string]interface{}, v *mvccpb.KeyValue, action, stripPrefix string) map[string]interface{} {
 	// remove prefix if non empty, and ensure leading / is removed as well
 	vkey := strings.TrimPrefix(strings.TrimPrefix(string(v.Key), stripPrefix), "/")
 	// split on prefix
 	keys := strings.Split(vkey, "/")
 
 	var vals interface{}
-	json.Unmarshal(v.Value, &vals)
+	e.Decode(v.Value, &vals)
 
 	// set data for first iteration
 	kvals := data

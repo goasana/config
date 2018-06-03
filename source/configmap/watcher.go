@@ -1,7 +1,6 @@
 package configmap
 
 import (
-	"encoding/json"
 	"errors"
 	"time"
 
@@ -13,18 +12,21 @@ import (
 )
 
 type watcher struct {
+	opts source.Options
 	name      string
 	namespace string
 	client    *kubernetes.Clientset
 	st        cache.Store
 	ct        cache.Controller
 	ch        chan *source.ChangeSet
+
 	exit      chan bool
 	stop      chan struct{}
 }
 
-func newWatcher(n, ns string, c *kubernetes.Clientset) (source.Watcher, error) {
+func newWatcher(n, ns string, c *kubernetes.Clientset, opts source.Options) (source.Watcher, error) {
 	w := &watcher{
+		opts: opts,
 		name:      n,
 		namespace: ns,
 		client:    c,
@@ -58,13 +60,13 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 
 	data := makeMap(newCmp.(v12.ConfigMap).Data)
 
-	b, err := json.Marshal(data)
+	b, err := w.opts.Encoder.Encode(data)
 	if err != nil {
 		return
 	}
 
 	cs := &source.ChangeSet{
-		Format:    "json",
+		Format:    w.opts.Encoder.String(),
 		Source:    w.name,
 		Data:      b,
 		Timestamp: newCmp.(v12.ConfigMap).CreationTimestamp.Time,
