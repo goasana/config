@@ -12,7 +12,7 @@ import (
 )
 
 type watcher struct {
-	opts source.Options
+	opts      source.Options
 	name      string
 	namespace string
 	client    *kubernetes.Clientset
@@ -20,13 +20,13 @@ type watcher struct {
 	ct        cache.Controller
 	ch        chan *source.ChangeSet
 
-	exit      chan bool
-	stop      chan struct{}
+	exit chan bool
+	stop chan struct{}
 }
 
 func newWatcher(n, ns string, c *kubernetes.Clientset, opts source.Options) (source.Watcher, error) {
 	w := &watcher{
-		opts: opts,
+		opts:      opts,
 		name:      n,
 		namespace: ns,
 		client:    c,

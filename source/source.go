@@ -26,4 +26,3 @@ type Watcher interface {
 	Next() (*ChangeSet, error)
 	Stop() error
 }
-

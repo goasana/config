@@ -8,11 +8,11 @@ import (
 )
 
 type Options struct {
-        // Encoder
-        Encoder encoder.Encoder
+	// Encoder
+	Encoder encoder.Encoder
 
-        // for alternative data
-        Context context.Context
+	// for alternative data
+	Context context.Context
 }
 
 type Option func(o *Options)
@@ -32,7 +32,7 @@ func NewOptions(opts ...Option) Options {
 
 // WithEncoder sets the source encoder
 func WithEncoder(e encoder.Encoder) Option {
-        return func(o *Options) {
-                o.Encoder = e
-        }
+	return func(o *Options) {
+		o.Encoder = e
+	}
 }
