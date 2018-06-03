@@ -42,11 +42,22 @@ TODO:
 
 ## Formats
 
-Sources are currently expected return config as JSON to operate with the default config reader
+- **Encoders** are uses to handle source changeset encoding formats
+- **Readers** use encoders to decode, merge and re-encode changesets
 
-The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) defaults to json but can be swapped out to any other format.
+### Encoder
 
-```
+The [`Encoder`](https://godoc.org/github.com/micro/go-config/encoder#Encoder) interface supports the following source formats:
+
+- json
+- yaml
+- toml
+- xml
+- hcl 
+
+The default encoder is JSON with expected format:
+
+```json
 {
 	"path": {
 		"to": {
@@ -54,6 +65,34 @@ The [Reader](https://godoc.org/github.com/micro/go-config/reader#Reader) default
 		}
 	}
 }
+```
+
+Encoders can be changed like so:
+
+```go
+e := yaml.NewEncoder()
+
+s := consul.NewSource(
+	source.WithEncoder(e),
+)
+```
+
+### Reader
+
+The [`Reader`](https://godoc.org/github.com/micro/go-config/reader#Reader) uses the encoders to parse configuration and merges 
+into a single format. The current default reader merges multiple changesets into a single JSON changeset.
+
+The [`Reader`](https://godoc.org/github.com/micro/go-config/reader#Reader) defaults to json but can be swapped out to anything 
+implementing it's interface.
+
+Add new encoder to a reader like so:
+
+```go
+e := yaml.NewEncoder()
+
+r := json.NewReader(
+	reader.WithEncoder(e),
+)
 ```
 
 ## Config 
