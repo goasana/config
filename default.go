@@ -83,6 +83,7 @@ func (c *config) watch(idx int, s source.Source) {
 			// merge sets
 			set, err := c.opts.Reader.Merge(c.sets...)
 			if err != nil {
+				c.Unlock()
 				return err
 			}
 
@@ -179,6 +180,7 @@ func (c *config) sync() {
 	// merge sets
 	set, err := c.opts.Reader.Merge(sets...)
 	if err != nil {
+		c.Unlock()
 		return
 	}
 
