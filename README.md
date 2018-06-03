@@ -25,14 +25,15 @@ pluggable and mergeable. You'll never have to deal with config in the same way a
 
 Sources are backends from which config is loaded. The following sources for config are supported.
 
+- [configmap](https://github.com/micro/go-config/tree/master/source/configmap) - read from k8s configmap
 - [consul](https://github.com/micro/go-config/tree/master/source/consul) - read from consul
 - [etcd](https://github.com/micro/go-config/tree/master/source/etcd) - read from etcd v3
 - [envvar](https://github.com/micro/go-config/tree/master/source/envvar) - read from environment variables
 - [file](https://github.com/micro/go-config/tree/master/source/file) - read from file
 - [flag](https://github.com/micro/go-config/tree/master/source/flag) - read from flags
+- [grpc](https://github.com/micro/go-config/tree/master/source/grpc) - read from grpc server
 - [memory](https://github.com/micro/go-config/tree/master/source/memory) - read from memory
 - [microcli](https://github.com/micro/go-config/tree/master/source/microcli) - read from micro cli flags
-- [configmap](https://github.com/micro/go-config/tree/master/source/configmap) - read from k8s configmap
 
 TODO:
 
