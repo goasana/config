@@ -1,12 +1,12 @@
 package microcli
 
 import (
-	"encoding/json"
+	"strings"
+	"time"
+
 	"github.com/imdario/mergo"
 	"github.com/micro/cli"
 	"github.com/micro/go-config/source"
-	"strings"
-	"time"
 )
 
 type clisrc struct {
@@ -27,13 +27,13 @@ func (c *clisrc) Read() (*source.ChangeSet, error) {
 		mergo.Map(&changes, tmp) // need to sort error handling
 	}
 
-	b, err := json.Marshal(changes)
+	b, err := c.opts.Encoder.Encode(changes)
 	if err != nil {
 		return nil, err
 	}
 
 	cs := &source.ChangeSet{
-		Format:    "json",
+		Format:    c.opts.Encoder.String(),
 		Data:      b,
 		Timestamp: time.Now(),
 		Source:    c.String(),
@@ -91,10 +91,5 @@ func (c *clisrc) String() string {
 //          }
 //      }
 func NewSource(ctx *cli.Context, opts ...source.Option) source.Source {
-	var options source.Options
-	for _, o := range opts {
-		o(&options)
-	}
-
-	return &clisrc{opts: options, ctx: ctx}
+	return &clisrc{opts: source.NewOptions(opts...), ctx: ctx}
 }

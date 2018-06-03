@@ -55,16 +55,11 @@ func (f *file) Watch() (source.Watcher, error) {
 }
 
 func NewSource(opts ...source.Option) source.Source {
-	var options source.Options
-	for _, o := range opts {
-		o(&options)
-	}
+	options := source.NewOptions(opts...)
 	path := DefaultPath
-	if options.Context != nil {
-		f, ok := options.Context.Value(filePathKey{}).(string)
-		if ok {
-			path = f
-		}
+	f, ok := options.Context.Value(filePathKey{}).(string)
+	if ok {
+		path = f
 	}
 	return &file{opts: options, path: path}
 }

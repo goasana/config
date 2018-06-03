@@ -2,7 +2,6 @@
 package configmap
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/micro/go-config/source"
@@ -37,13 +36,13 @@ func (k *configmap) Read() (*source.ChangeSet, error) {
 
 	data := makeMap(cmp.Data)
 
-	b, err := json.Marshal(data)
+	b, err := k.opts.Encoder.Encode(data)
 	if err != nil {
 		return nil, fmt.Errorf("error reading source: %v", err)
 	}
 
 	cs := &source.ChangeSet{
-		Format:    "json",
+		Format:    k.opts.Encoder.String(),
 		Source:    k.String(),
 		Data:      b,
 		Timestamp: cmp.CreationTimestamp.Time,
@@ -62,7 +61,7 @@ func (k *configmap) Watch() (source.Watcher, error) {
 		return nil, k.cerr
 	}
 
-	w, err := newWatcher(k.name, k.namespace, k.client)
+	w, err := newWatcher(k.name, k.namespace, k.client, k.opts)
 	if err != nil {
 		return nil, err
 	}
@@ -71,36 +70,30 @@ func (k *configmap) Watch() (source.Watcher, error) {
 
 func NewSource(opts ...source.Option) source.Source {
 	var (
-		options    source.Options
+		options    = source.NewOptions(opts...)
 		name       = DefaultName
 		configPath = DefaultConfigPath
 		namespace  = DefaultNamespace
 	)
 
-	for _, o := range opts {
-		o(&options)
+	prefix, ok := options.Context.Value(prefixKey{}).(string)
+	if ok {
+		name = prefix
 	}
 
-	if options.Context != nil {
-		prefix, ok := options.Context.Value(prefixKey{}).(string)
-		if ok {
-			name = prefix
-		}
+	cfg, ok := options.Context.Value(configPathKey{}).(string)
+	if ok {
+		configPath = cfg
+	}
 
-		cfg, ok := options.Context.Value(configPathKey{}).(string)
-		if ok {
-			configPath = cfg
-		}
+	sname, ok := options.Context.Value(nameKey{}).(string)
+	if ok {
+		name = sname
+	}
 
-		sname, ok := options.Context.Value(nameKey{}).(string)
-		if ok {
-			name = sname
-		}
-
-		ns, ok := options.Context.Value(namespaceKey{}).(string)
-		if ok {
-			namespace = ns
-		}
+	ns, ok := options.Context.Value(namespaceKey{}).(string)
+	if ok {
+		namespace = ns
 	}
 
 	// TODO handle if the client fails what to do current return does not support error

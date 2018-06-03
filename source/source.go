@@ -2,7 +2,6 @@
 package source
 
 import (
-	"context"
 	"time"
 )
 
@@ -28,9 +27,3 @@ type Watcher interface {
 	Stop() error
 }
 
-type Options struct {
-	// for alternative data
-	Context context.Context
-}
-
-type Option func(o *Options)
