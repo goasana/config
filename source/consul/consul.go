@@ -1,7 +1,6 @@
 package consul
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
 	"time"
@@ -35,7 +34,7 @@ func (c *consul) Read() (*source.ChangeSet, error) {
 
 	data := makeMap(c.opts.Encoder, kv, c.stripPrefix)
 
-	b, err := json.Marshal(data)
+	b, err := c.opts.Encoder.Encode(data)
 	if err != nil {
 		return nil, fmt.Errorf("error reading source: %v", err)
 	}
