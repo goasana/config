@@ -19,7 +19,7 @@ Specify source with address and path
 
 ```go
 source := grpc.NewSource(
-	// optionally specify consul address; default to localhost:8080
+	// optionally specify server address; default to localhost:8080
 	grpc.WithAddress("10.0.0.10:8500"),
 	// optionally specify a path; defaults to /micro/config
 	grpc.WithPath("/my/config/path"),
@@ -35,5 +35,5 @@ Load the source into config
 conf := config.NewConfig()
 
 // Load file source
-conf.Load(consulSource)
+conf.Load(grpcSource)
 ```
