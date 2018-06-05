@@ -69,12 +69,21 @@ Top level config is an interface. It supports multiple sources, watching and fal
 ### Interface
 
 ```go
+
+// Config is an interface abstraction for dynamic configuration
 type Config interface {
-        Close() error
-        Bytes() []byte
-        Get(path ...string) reader.Value
-        Load(source ...source.Source) error
-        Watch(path ...string) (Watcher, error)
+	// Stop the config loader/watcher
+	Close() error
+	// Get the whole config as raw output
+	Bytes() []byte
+	// Force a source changeset sync
+	Sync() error
+	// Get a value from the config
+	Get(path ...string) reader.Value
+	// Load config sources
+	Load(source ...source.Source) error
+	// Watch a value for changes
+	Watch(path ...string) (Watcher, error)
 }
 ```
 
@@ -126,7 +135,7 @@ type Value interface {
 
 ### Load File
 
-```
+```go
 import "github.com/micro/go-config/source/file"
 
 // Create new config
