@@ -163,15 +163,18 @@ func (c *config) update() {
 }
 
 // sync loads all the sources, calls the parser and updates the config
-func (c *config) sync() {
+func (c *config) Sync() error {
 	var sets []*source.ChangeSet
 
 	c.Lock()
 
 	// read the source
+	var gerr []string
+
 	for _, source := range c.sources {
 		ch, err := source.Read()
 		if err != nil {
+			gerr = append(gerr, err.Error())
 			continue
 		}
 		sets = append(sets, ch)
@@ -181,17 +184,28 @@ func (c *config) sync() {
 	set, err := c.opts.Reader.Merge(sets...)
 	if err != nil {
 		c.Unlock()
-		return
+		return err
 	}
 
 	// set values
-	c.vals, _ = c.opts.Reader.Values(set)
+	vals, err := c.opts.Reader.Values(set)
+	if err != nil {
+		c.Unlock()
+		return err
+	}
+	c.vals = vals
 	c.set = set
 
 	c.Unlock()
 
 	// update watchers
 	c.update()
+
+	if len(gerr) > 0 {
+		return fmt.Errorf("source loading errors: %s", strings.Join(gerr, "\n"))
+	}
+
+	return nil
 }
 
 // reload reads the sets and creates new values
@@ -227,7 +241,7 @@ func (c *config) Close() error {
 
 func (c *config) Get(path ...string) reader.Value {
 	if !c.loaded() {
-		c.sync()
+		c.Sync()
 	}
 
 	c.Lock()
@@ -270,7 +284,7 @@ func (c *config) Get(path ...string) reader.Value {
 
 func (c *config) Bytes() []byte {
 	if !c.loaded() {
-		c.sync()
+		c.Sync()
 	}
 
 	c.Lock()
