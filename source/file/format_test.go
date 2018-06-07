@@ -2,9 +2,14 @@ package file
 
 import (
 	"testing"
+
+	"github.com/micro/go-config/source"
 )
 
 func TestFormat(t *testing.T) {
+	opts := source.NewOptions()
+	e := opts.Encoder
+
 	testCases := []struct {
 		p string
 		f string
@@ -13,11 +18,11 @@ func TestFormat(t *testing.T) {
 		{"/foo/bar.yaml", "yaml"},
 		{"/foo/bar.xml", "xml"},
 		{"/foo/bar.conf.ini", "ini"},
-		{"conf", "json"},
+		{"conf", e.String()},
 	}
 
 	for _, d := range testCases {
-		f := format(d.p)
+		f := format(d.p, e)
 		if f != d.f {
 			t.Fatalf("%s: expected %s got %s", d.p, d.f, f)
 		}
