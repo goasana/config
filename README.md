@@ -24,7 +24,7 @@ Go-config makes this easy, pluggable and mergeable. You'll never have to deal wi
 
 ## Sources
 
-A `Source` is a backends from which config is loaded. Multiple sources can be used at the same time.
+A `Source` is a backend from which config is loaded. Multiple sources can be used at the same time.
 
 The following sources are supported:
 
