@@ -197,11 +197,6 @@ conf.Load(file.NewSource(
 ))
 ```
 
-### Load Source
-
-
-
-
 ### Scan Value
 
 ```go
