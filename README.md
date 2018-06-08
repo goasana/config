@@ -137,6 +137,7 @@ type Config interface {
 ## Usage
 
 - [Sample Config](#sample-config)
+- [New Config](#new-config)
 - [Load File](#load-file)
 - [Scan Value](#scan-value)
 - [Cast Value](#cast-value)
@@ -144,6 +145,8 @@ type Config interface {
 - [Multiple Sources](#merge-sources)
 - [Set Source Encoder](#set-source-encoder)
 - [Add Reader Encoder](#add-reader-encoder)
+
+
 
 ### Sample Config
 
@@ -166,7 +169,19 @@ Example json config:
 }
 ```
 
+### New Config
+
+Create a new config (or just make use of the default instance)
+
+```go
+import "github.com/micro/go-config"
+
+conf := config.NewConfig()
+```
+
 ### Load File
+
+Load config from a file source. It uses the file extension to determine config format.
 
 ```go
 import (
@@ -174,11 +189,8 @@ import (
 	"github.com/micro/go-config/source/file"
 )
 
-// Create new config
-conf := config.NewConfig()
-
-// Load file source
-conf.Load(file.NewSource(
+// Load json config file
+config.Load(file.NewSource(
 	file.WithPath("/tmp/config.json"),
 ))
 ```
@@ -186,8 +198,8 @@ conf.Load(file.NewSource(
 Load a yaml, toml or xml file by specifying a file with the appropriate file extension
 
 ```go
-// Load yaml file
-conf.Load(file.NewSource(
+// Load yaml config file
+config.Load(file.NewSource(
         file.WithPath("/tmp/config.yaml"),
 ))
 ```
@@ -198,7 +210,7 @@ If an extension does not exist, specify the encoder
 enc := toml.NewEncoder()
 
 // Load toml file with encoder
-conf.Load(file.NewSource(
+config.Load(file.NewSource(
         file.WithPath("/tmp/config"),
 	source.WithEncoder(enc),
 ))
@@ -214,7 +226,7 @@ type Host struct {
 
 var host Host
 
-conf.Get("hosts", "database").Scan(&host)
+config.Get("hosts", "database").Scan(&host)
 
 // 10.0.0.1 3306
 fmt.Println(host.Address, host.Port)
@@ -224,10 +236,10 @@ fmt.Println(host.Address, host.Port)
 
 ```go
 // Get address. Set default to localhost as fallback
-address := conf.Get("hosts", "database", "address").String("localhost")
+address := config.Get("hosts", "database", "address").String("localhost")
 
 // Get port. Set default to 3000 as fallback
-port := conf.Get("hosts", "database", "port").Int(3000)
+port := config.Get("hosts", "database", "port").Int(3000)
 ```
 
 ### Watch Path
@@ -235,7 +247,7 @@ port := conf.Get("hosts", "database", "port").Int(3000)
 Watch a path for changes. When the file changes the new value will be made available.
 
 ```go
-w, err := conf.Watch("hosts", "database")
+w, err := config.Watch("hosts", "database")
 if err != nil {
 	// do something
 }
@@ -256,10 +268,7 @@ v.Scan(&host)
 Multiple sources can be loaded and merged. Merging priority is in reverse order. 
 
 ```go
-conf := config.NewConfig()
-
-
-conf.Load(
+config.Load(
 	// base config from env
 	envvar.NewSource(),
 	// override env with flags
