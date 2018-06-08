@@ -5,6 +5,10 @@ Go Config is a pluggable dynamic config library
 Most config in applications are statically configured or include complex logic to load from multiple sources. 
 Go-config makes this easy, pluggable and mergeable. You'll never have to deal with config in the same way again.
 
+```go
+go get -u "github.com/micro/go-config"
+```
+
 ## Features
 
 - **Dynamic** - load config on the fly as you need it
@@ -165,7 +169,10 @@ Example json config:
 ### Load File
 
 ```go
-import "github.com/micro/go-config/source/file"
+import (
+	"github.com/micro/go-config"
+	"github.com/micro/go-config/source/file"
+)
 
 // Create new config
 conf := config.NewConfig()
