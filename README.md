@@ -21,6 +21,7 @@ Go-config makes this easy, pluggable and mergeable. You'll never have to deal wi
 - [Config](#config) - Config manager which manages multiple sources 
 - [Usage](#usage) - Example usage of go-config
 - [FAQ](#faq) - General questions and answers
+- [TODO](#todo) - TODO tasks/features
 
 ## Sources
 
@@ -383,3 +384,7 @@ it can later be merged by the reader.
 In some cases source data may not actually be key-value so it's easier to represent it as bytes and defer decoding to 
 the reader.
 
+## TODO
+
+- Config Versioning - version the internal changeset and allow the user to specify version
+- Canarying/Coordination - allow coordination of instances that subscribe to config and canary an update
