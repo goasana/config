@@ -19,7 +19,7 @@ type Values interface {
 	Bytes() []byte
 	Get(path ...string) Value
 	Map() map[string]interface{}
-	String() string
+	Scan(v interface{}) error
 }
 
 // Value represents a value of any type

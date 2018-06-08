@@ -53,9 +53,9 @@ type ChangeSet struct {
 	Data      []byte
 	// MD5 checksum of the data
 	Checksum  string
-	// Encoding format
+	// Encoding format e.g json, yaml, toml, xml
 	Format    string
-	// Source of the config
+	// Source of the config e.g file, consul, etcd
 	Source    string
 	// Time of loading or update
 	Timestamp time.Time
@@ -77,12 +77,15 @@ The following encoding formats are supported:
 
 ## Reader
 
-A `Reader` represents multiple changesets as a single merged and queryable interface. 
+A `Reader` represents multiple changesets as a single merged and queryable set of values.
 
 ```go
 type Reader interface {
+	// Merge multiple changeset into a single format
 	Merge(...*source.ChangeSet) (*source.ChangeSet, error)
+	// Return return Go assertable values
 	Values(*source.ChangeSet) (Values, error)
+	// Name of the reader e.g a json reader
 	String() string
 }
 ```
@@ -90,6 +93,23 @@ type Reader interface {
 The reader makes use of Encoders to decode changesets into `map[string]interface{}` then merge them into 
 a single changeset. It looks at the Format field to determine the Encoder. The changeset is then represented 
 as a set of `Values` with the ability to retrive Go types and fallback where values cannot be loaded.
+
+```go
+
+// Values is returned by the reader
+type Values interface {
+	// Return raw data
+        Bytes() []byte
+	// Retrieve a value
+        Get(path ...string) Value
+	// Return values as a map
+        Map() map[string]interface{}
+	// Scan config into a Go type
+        Scan(v interface{}) error
+}
+```
+
+The `Value` interface allows casting/type asserting to go types with fallback defaults.
 
 ```go
 type Value interface {
@@ -115,16 +135,14 @@ It manages reading, syncing, watching from multiple backend sources and represen
 
 // Config is an interface abstraction for dynamic configuration
 type Config interface {
+        // provide the reader.Values interface
+        reader.Values
 	// Stop the config loader/watcher
 	Close() error
-	// Get the whole config as raw output
-	Bytes() []byte
-	// Force a source changeset sync
-	Sync() error
-	// Get a value from the config
-	Get(path ...string) reader.Value
 	// Load config sources
 	Load(source ...source.Source) error
+	// Force a source changeset sync
+	Sync() error
 	// Watch a value for changes
 	Watch(path ...string) (Watcher, error)
 }
@@ -135,8 +153,8 @@ type Config interface {
 - [Sample Config](#sample-config)
 - [New Config](#new-config)
 - [Load File](#load-file)
-- [Scan Value](#scan-value)
-- [Cast Value](#cast-value)
+- [Read Config](#read-config)
+- [Read Values](#read-values)
 - [Watch Path](#watch-path)
 - [Multiple Sources](#merge-sources)
 - [Set Source Encoder](#set-source-encoder)
@@ -212,7 +230,41 @@ config.Load(file.NewSource(
 ))
 ```
 
-### Scan Value
+### Read Config
+
+Read the entire config as a map
+
+```go
+// retrieve map[string]interface{}
+conf := config.Map()
+
+// map[cache:map[address:10.0.0.2 port:6379] database:map[address:10.0.0.1 port:3306]]
+fmt.Println(conf["hosts"])
+```
+
+Scan the config into a struct
+
+```go
+type Host struct {
+        Address string `json:"address"`
+        Port int `json:"port"`
+}
+
+type Config struct{
+	Hosts map[string]Host `json:"hosts"`
+}
+
+var conf Config
+
+config.Scan(&conf)
+
+// 10.0.0.1 3306
+fmt.Println(conf.Hosts["database"].Address, conf.Hosts["database"].Port)
+```
+
+### Read Values
+
+Scan a value from the config into a struct
 
 ```go
 type Host struct {
@@ -228,7 +280,7 @@ config.Get("hosts", "database").Scan(&host)
 fmt.Println(host.Address, host.Port)
 ```
 
-### Cast Value
+Read individual values as Go types
 
 ```go
 // Get address. Set default to localhost as fallback
