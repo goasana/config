@@ -10,16 +10,14 @@ import (
 
 // Config is an interface abstraction for dynamic configuration
 type Config interface {
+	// provide the reader.Values interface
+	reader.Values
 	// Stop the config loader/watcher
 	Close() error
-	// Get the whole config as raw output
-	Bytes() []byte
-	// Force a source changeset sync
-	Sync() error
-	// Get a value from the config
-	Get(path ...string) reader.Value
 	// Load config sources
 	Load(source ...source.Source) error
+	// Force a source changeset sync
+	Sync() error
 	// Watch a value for changes
 	Watch(path ...string) (Watcher, error)
 }
@@ -53,6 +51,16 @@ func NewConfig(opts ...Option) Config {
 // Return config as raw json
 func Bytes() []byte {
 	return DefaultConfig.Bytes()
+}
+
+// Return config as a map
+func Map() map[string]interface{} {
+	return DefaultConfig.Map()
+}
+
+// Scan values to a go type
+func Scan(v interface{}) error {
+	return DefaultConfig.Scan(v)
 }
 
 // Force a source changeset sync

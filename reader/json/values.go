@@ -72,6 +72,14 @@ func (j *jsonValues) Map() map[string]interface{} {
 	return m
 }
 
+func (j *jsonValues) Scan(v interface{}) error {
+	b, err := j.sj.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(b, v)
+}
+
 func (j *jsonValues) String() string {
 	return "json"
 }

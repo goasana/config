@@ -162,6 +162,18 @@ func (c *config) update() {
 	}
 }
 
+func (c *config) Map() map[string]interface{} {
+	c.RLock()
+	defer c.RUnlock()
+	return c.vals.Map()
+}
+
+func (c *config) Scan(v interface{}) error {
+	c.RLock()
+	defer c.RUnlock()
+	return c.vals.Scan(v)
+}
+
 // sync loads all the sources, calls the parser and updates the config
 func (c *config) Sync() error {
 	var sets []*source.ChangeSet
@@ -353,6 +365,10 @@ func (c *config) Watch(path ...string) (Watcher, error) {
 	}()
 
 	return w, nil
+}
+
+func (c *config) String() string {
+	return "config"
 }
 
 func (w *watcher) Next() (reader.Value, error) {
