@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/micro/go-config/source/envvar"
+	"github.com/micro/go-config/source/env"
 	"github.com/micro/go-config/source/file"
 )
 
@@ -48,7 +48,7 @@ func TestIssue18(t *testing.T) {
 		file.NewSource(
 			file.WithPath(path),
 		),
-		envvar.NewSource(),
+		env.NewSource(),
 	)
 
 	actualHost := conf.Get("amqp", "host").String("backup")
