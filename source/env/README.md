@@ -1,6 +1,6 @@
-# Env Var Source
+# Env Source
 
-The envvar source reads config from environment variables
+The env source reads config from environment variables
 
 ## Format
 
@@ -51,9 +51,9 @@ VAULT_ADDR=vault:1337
 and a source initialized as follows:
 
 ```
-envvarsrc := envvar.NewSource(
-    envvar.WithPrefix("VAULT"),
-    envvar.WithStrippedPrefix("APP"),
+src := env.NewSource(
+    env.WithPrefix("VAULT"),
+    env.WithStrippedPrefix("APP"),
 )
 ```
 
@@ -77,9 +77,9 @@ The resulting config will be:
 Specify source with data
 
 ```go
-envvarSource := envvar.NewSource(
+src := env.NewSource(
 	// optionally specify prefix
-	envvar.WithPrefix("MICRO"),
+	env.WithPrefix("MICRO"),
 )
 ```
 
@@ -92,5 +92,5 @@ Load the source into config
 conf := config.NewConfig()
 
 // Load file source
-conf.Load(envvarSource)
+conf.Load(src)
 ```

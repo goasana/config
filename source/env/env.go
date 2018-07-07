@@ -1,4 +1,4 @@
-package envvar
+package env
 
 import (
 	"os"
@@ -13,13 +13,13 @@ var (
 	DefaultPrefixes = []string{}
 )
 
-type envvar struct {
+type env struct {
 	prefixes         []string
 	strippedPrefixes []string
 	opts             source.Options
 }
 
-func (e *envvar) Read() (*source.ChangeSet, error) {
+func (e *env) Read() (*source.ChangeSet, error) {
 	var changes map[string]interface{}
 
 	for _, env := range os.Environ() {
@@ -94,12 +94,12 @@ func reverse(ss []string) {
 	}
 }
 
-func (e *envvar) Watch() (source.Watcher, error) {
+func (e *env) Watch() (source.Watcher, error) {
 	return newWatcher()
 }
 
-func (e *envvar) String() string {
-	return "envvar"
+func (e *env) String() string {
+	return "env"
 }
 
 // NewSource returns a config source for parsing ENV variables.
@@ -131,5 +131,5 @@ func NewSource(opts ...source.Option) source.Source {
 	if len(sp) > 0 || len(pre) > 0 {
 		pre = append(pre, DefaultPrefixes...)
 	}
-	return &envvar{prefixes: pre, strippedPrefixes: sp, opts: options}
+	return &env{prefixes: pre, strippedPrefixes: sp, opts: options}
 }

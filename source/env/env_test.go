@@ -1,4 +1,4 @@
-package envvar
+package env
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"github.com/micro/go-config/source"
 )
 
-func TestEnvvar_Read(t *testing.T) {
+func TestEnv_Read(t *testing.T) {
 	expected := map[string]map[string]string{
 		"database": {
 			"host":       "localhost",

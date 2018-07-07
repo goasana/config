@@ -8,7 +8,7 @@ Go-config makes this easy, pluggable and mergeable. You'll never have to deal wi
 ## Features
 
 - **Dynamic** - load config on the fly as you need it
-- **Pluggable** - choose which source to load from; file, envvar, consul
+- **Pluggable** - choose which source to load from; file, env, consul
 - **Mergeable** - merge and override multiple config sources
 - **Fallback** - specify fallback values where keys don't exist
 - **Watch** - Watch the config for changes
@@ -32,7 +32,7 @@ The following sources are supported:
 - [configmap](https://github.com/micro/go-config/tree/master/source/configmap) - read from k8s configmap
 - [consul](https://github.com/micro/go-config/tree/master/source/consul) - read from consul
 - [etcd](https://github.com/micro/go-config/tree/master/source/etcd) - read from etcd v3
-- [envvar](https://github.com/micro/go-config/tree/master/source/envvar) - read from environment variables
+- [env](https://github.com/micro/go-config/tree/master/source/env) - read from environment variables
 - [file](https://github.com/micro/go-config/tree/master/source/file) - read from file
 - [flag](https://github.com/micro/go-config/tree/master/source/flag) - read from flags
 - [grpc](https://github.com/micro/go-config/tree/master/source/grpc) - read from grpc server
@@ -319,7 +319,7 @@ Multiple sources can be loaded and merged. Merging priority is in reverse order.
 ```go
 config.Load(
 	// base config from env
-	envvar.NewSource(),
+	env.NewSource(),
 	// override env with flags
 	flag.NewSource(),
 	// override flags with file
