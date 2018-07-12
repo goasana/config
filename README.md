@@ -157,7 +157,7 @@ type Config interface {
 - [Read Config](#read-config)
 - [Read Values](#read-values)
 - [Watch Path](#watch-path)
-- [Multiple Sources](#merge-sources)
+- [Multiple Sources](#multiple-sources)
 - [Set Source Encoder](#set-source-encoder)
 - [Add Reader Encoder](#add-reader-encoder)
 
