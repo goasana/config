@@ -10,8 +10,8 @@ Go-config makes this easy, pluggable and mergeable. You'll never have to deal wi
 - **Dynamic** - load config on the fly as you need it
 - **Pluggable** - choose which source to load from; file, env, consul
 - **Mergeable** - merge and override multiple config sources
-- **Fallback** - specify fallback values where keys don't exist
-- **Watch** - Watch the config for changes
+- **Observable** - Watch the config for changes
+- **Safe** - specify fallback values where keys don't exist
 
 ## Getting Started
 
