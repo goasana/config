@@ -38,6 +38,7 @@ The following sources are supported:
 - [grpc](https://github.com/micro/go-config/tree/master/source/grpc) - read from grpc server
 - [memory](https://github.com/micro/go-config/tree/master/source/memory) - read from memory
 - [microcli](https://github.com/micro/go-config/tree/master/source/microcli) - read from micro cli flags
+- [runtimevar](https://github.com/micro/go-config/tree/master/source/runtimevar) - read from Go Cloud runtimevar watcher
 
 TODO:
 
