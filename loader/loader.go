@@ -2,11 +2,16 @@
 package loader
 
 import (
+	"context"
+
+	"github.com/micro/go-config/reader"
 	"github.com/micro/go-config/source"
 )
 
 // Loader manages loading sources
 type Loader interface {
+	// Stop the loader
+	Close() error
 	// Load the sources
 	Load(...source.Source) error
 	// A Snapshot of loaded config
@@ -21,8 +26,12 @@ type Loader interface {
 
 // Watcher lets you watch sources and returns a merged ChangeSet
 type Watcher interface {
+	// First call to next may return the current Snapshot
+	// If you are watching a path then only the data from
+	// that path is returned.
 	Next() (*Snapshot, error)
-	Stop()
+	// Stop watching for changes
+	Stop() error
 }
 
 // Snapshot is a merged ChangeSet
@@ -32,3 +41,13 @@ type Snapshot struct {
 	// Deterministic and comparable version of the snapshot
 	Version string
 }
+
+type Options struct {
+	Reader reader.Reader
+	Source []source.Source
+
+	// for alternative data
+	Context context.Context
+}
+
+type Option func(o *Options)
