@@ -18,7 +18,8 @@ Go-config makes this easy, pluggable and mergeable. You'll never have to deal wi
 - [Source](#source) - A backend from which config is loaded
 - [Encoder](#encoder) - Handles encoding/decoding source config 
 - [Reader](#reader) - Merges multiple encoded sources as a single format
-- [Config](#config) - Config manager which manages multiple sources 
+- [Loader](#loader) - Loader manages multiple source loading
+- [Config](#config) - Config abstracts away the above interfaces
 - [Usage](#usage) - Example usage of go-config
 - [FAQ](#faq) - General questions and answers
 - [TODO](#todo) - TODO tasks/features
@@ -126,11 +127,31 @@ type Value interface {
 }
 ```
 
+## Loader
+
+`Loader` manages loading from multiple sources and representing them as a single snapshot
+
+```go
+// Loader manages loading sources
+type Loader interface {
+	// Stop the loader
+	Close() error
+	// Load the sources
+	Load(...source.Source) error
+	// A Snapshot of loaded config
+	Snapshot() (*Snapshot, error)
+	// Force sync of sources
+	Sync() error
+	// Watch for changes
+	Watch(...string) (Watcher, error)
+	// Name of loader
+	String() string
+}
+```
+
 ## Config 
 
-`Config` manages all config, abstracting away sources, encoders and the reader. 
-
-It manages reading, syncing, watching from multiple backend sources and represents them as a single merged and queryable source.
+`Config` is the high level abstraction over all the underlying functionality. It provides a queryable top-level interface.
 
 ```go
 
@@ -160,7 +181,6 @@ type Config interface {
 - [Multiple Sources](#multiple-sources)
 - [Set Source Encoder](#set-source-encoder)
 - [Add Reader Encoder](#add-reader-encoder)
-
 
 
 ### Sample Config
