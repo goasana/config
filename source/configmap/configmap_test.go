@@ -11,6 +11,10 @@ import (
 )
 
 func TestGetClient(t *testing.T) {
+	if tr := os.Getenv("TRAVIS"); len(tr) > 0 {
+		return
+	}
+
 	localCfg := os.Getenv("HOME") + "/.kube/config"
 	tt := []struct {
 		name        string
@@ -56,6 +60,10 @@ func TestGetClient(t *testing.T) {
 }
 
 func TestMakeMap(t *testing.T) {
+	if tr := os.Getenv("TRAVIS"); len(tr) > 0 {
+		return
+	}
+
 	tt := []struct {
 		name  string
 		din   map[string]string
@@ -118,7 +126,10 @@ func TestMakeMap(t *testing.T) {
 }
 
 func TestConfigmap_Read(t *testing.T) {
-	//	cfg := os.Getenv("HOME") + "/.kube/config"
+	if tr := os.Getenv("TRAVIS"); len(tr) > 0 {
+		return
+	}
+
 	data := []byte(`{"config":{"host":"0.0.0.0","port":"1337"},"mongodb":{"host":"127.0.0.1","password":"password","port":"27017","user":"user"},"redis":{"url":"redis://127.0.0.1:6379/db01"}}`)
 
 	tt := []struct {
@@ -137,7 +148,6 @@ func TestConfigmap_Read(t *testing.T) {
 			source := NewSource(
 				WithName(tc.sname),
 				WithNamespace(tc.namespace),
-				//				WithConfigPath(cfg),
 			)
 
 			r, err := source.Read()
@@ -156,6 +166,10 @@ func TestConfigmap_Read(t *testing.T) {
 }
 
 func TestConfigmap_String(t *testing.T) {
+	if tr := os.Getenv("TRAVIS"); len(tr) > 0 {
+		return
+	}
+
 	source := NewSource()
 
 	if source.String() != "configmap" {
@@ -164,12 +178,13 @@ func TestConfigmap_String(t *testing.T) {
 }
 
 func TestNewSource(t *testing.T) {
-	//	cfg := os.Getenv("HOME") + "/.kube/config"
+	if tr := os.Getenv("TRAVIS"); len(tr) > 0 {
+		return
+	}
+
 	conf := config.NewConfig()
 
-	conf.Load(NewSource(
-	//		WithConfigPath(cfg),
-	))
+	conf.Load(NewSource())
 
 	if mongodbHost := conf.Get("mongodb", "host").String("localhost"); mongodbHost != "127.0.0.1" {
 		t.Errorf("expected %v and got %v", "127.0.0.1", mongodbHost)
