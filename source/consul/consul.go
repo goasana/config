@@ -32,7 +32,10 @@ func (c *consul) Read() (*source.ChangeSet, error) {
 		return nil, fmt.Errorf("source not found: %s", c.prefix)
 	}
 
-	data := makeMap(c.opts.Encoder, kv, c.stripPrefix)
+	data, err := makeMap(c.opts.Encoder, kv, c.stripPrefix)
+	if err != nil {
+		return nil, fmt.Errorf("error reading data: %v", err)
+	}
 
 	b, err := c.opts.Encoder.Encode(data)
 	if err != nil {
