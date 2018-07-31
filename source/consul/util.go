@@ -18,8 +18,10 @@ func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) (map[string]
 		keys := strings.Split(vkey, "/")
 
 		var vals interface{}
-		if err := e.Decode(v.Value, &vals); err != nil {
-			return nil, fmt.Errorf("faild decode value. path: %s, error: %s", vkey, err)
+		if len(v.Value) > 0 {
+			if err := e.Decode(v.Value, &vals); err != nil {
+				return nil, fmt.Errorf("faild decode value. path: %s, error: %s", vkey, err)
+			}
 		}
 
 		// set data for first iteration
