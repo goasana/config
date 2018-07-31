@@ -1,6 +1,7 @@
 package consul
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/hashicorp/consul/api"
@@ -18,7 +19,7 @@ func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) (map[string]
 
 		var vals interface{}
 		if err := e.Decode(v.Value, &vals); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("faild decode value. path: %s, error: %s", vkey, err)
 		}
 
 		// set data for first iteration
