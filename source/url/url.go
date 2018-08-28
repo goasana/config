@@ -30,9 +30,14 @@ func (u *urlSource) Read() (*source.ChangeSet, error) {
 		return nil, err
 	}
 
+	ft := format(rsp.Header.Get("Content-Type"))
+	if len(ft) == 0 {
+		ft = u.opts.Encoder.String()
+	}
+
 	cs := &source.ChangeSet{
 		Data:      b,
-		Format:    format(rsp.Header.Get("Content-Type")),
+		Format:    ft,
 		Timestamp: time.Now(),
 		Source:    u.String(),
 	}
@@ -42,7 +47,7 @@ func (u *urlSource) Read() (*source.ChangeSet, error) {
 }
 
 func (u *urlSource) Watch() (source.Watcher, error) {
-	return nil, nil
+	return newWatcher(u)
 }
 
 func (u *urlSource) String() string {
