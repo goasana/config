@@ -33,7 +33,7 @@ func (f *file) Read() (*source.ChangeSet, error) {
 	}
 
 	cs := &source.ChangeSet{
-		Format:    format(f.path),
+		Format:    format(f.path, f.opts.Encoder),
 		Source:    f.String(),
 		Timestamp: info.ModTime(),
 		Data:      b,

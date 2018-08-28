@@ -12,9 +12,9 @@ Values are expected to be JSON
 
 ```
 // set database
-etcdctl put micro/config/database '{"address": "10.0.0.1", "port": 3306}'
+etcdctl put /micro/config/database '{"address": "10.0.0.1", "port": 3306}'
 // set cache
-etcdctl put micro/config/cache '{"address": "10.0.0.2", "port": 6379}'
+etcdctl put /micro/config/cache '{"address": "10.0.0.2", "port": 6379}'
 ```
 
 Keys are split on `/` so access becomes

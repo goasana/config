@@ -54,7 +54,10 @@ func (w *watcher) handle(idx uint64, data interface{}) {
 		return
 	}
 
-	d := makeMap(w.e, kvs, w.stripPrefix)
+	d, err := makeMap(w.e, kvs, w.stripPrefix)
+	if err != nil {
+		return
+	}
 
 	b, err := w.e.Encode(d)
 	if err != nil {

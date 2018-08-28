@@ -1,13 +1,14 @@
 package consul
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/hashicorp/consul/api"
 	"github.com/micro/go-config/encoder"
 )
 
-func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) map[string]interface{} {
+func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) (map[string]interface{}, error) {
 	data := make(map[string]interface{})
 
 	for _, v := range kv {
@@ -17,7 +18,11 @@ func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) map[string]i
 		keys := strings.Split(vkey, "/")
 
 		var vals interface{}
-		e.Decode(v.Value, &vals)
+		if len(v.Value) > 0 {
+			if err := e.Decode(v.Value, &vals); err != nil {
+				return nil, fmt.Errorf("faild decode value. path: %s, error: %s", vkey, err)
+			}
+		}
 
 		// set data for first iteration
 		kvals := data
@@ -44,5 +49,5 @@ func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) map[string]i
 
 	}
 
-	return data
+	return data, nil
 }
