@@ -1,6 +1,6 @@
 # Config [![GoDoc](https://godoc.org/github.com/micro/go-config?status.svg)](https://godoc.org/github.com/micro/go-config)
 
-Go Config is a pluggable dynamic config library
+Go-config is a pluggable dynamic config library.
 
 Most config in applications are statically configured or include complex logic to load from multiple sources. 
 Go-config makes this easy, pluggable and mergeable. You'll never have to deal with config in the same way again.
@@ -86,7 +86,7 @@ A `Reader` represents multiple changesets as a single merged and queryable set o
 type Reader interface {
 	// Merge multiple changeset into a single format
 	Merge(...*source.ChangeSet) (*source.ChangeSet, error)
-	// Return return Go assertable values
+	// Return returns Go assertable values
 	Values(*source.ChangeSet) (Values, error)
 	// Name of the reader e.g a json reader
 	String() string
@@ -95,7 +95,7 @@ type Reader interface {
 
 The reader makes use of Encoders to decode changesets into `map[string]interface{}` then merge them into 
 a single changeset. It looks at the Format field to determine the Encoder. The changeset is then represented 
-as a set of `Values` with the ability to retrive Go types and fallback where values cannot be loaded.
+as a set of `Values` with the ability to retrieve Go types and fallback where values cannot be loaded.
 
 ```go
 
@@ -112,7 +112,7 @@ type Values interface {
 }
 ```
 
-The `Value` interface allows casting/type asserting to go types with fallback defaults.
+The `Value` interface allows casting/type asserting to Go types with fallback defaults.
 
 ```go
 type Value interface {
@@ -130,7 +130,7 @@ type Value interface {
 
 ## Loader
 
-`Loader` manages loading from multiple sources and representing them as a single snapshot
+`Loader` manages loading from multiple sources and representing them as a single snapshot.
 
 ```go
 // Loader manages loading sources
@@ -207,7 +207,7 @@ Example json config:
 
 ### New Config
 
-Create a new config (or just make use of the default instance)
+Create a new config (or just make use of the default instance).
 
 ```go
 import "github.com/micro/go-config"
@@ -231,7 +231,7 @@ config.Load(file.NewSource(
 ))
 ```
 
-Load a yaml, toml or xml file by specifying a file with the appropriate file extension
+Load a yaml, toml or xml file by specifying a file with the appropriate file extension.
 
 ```go
 // Load yaml config file
@@ -240,7 +240,7 @@ config.Load(file.NewSource(
 ))
 ```
 
-If an extension does not exist, specify the encoder
+If an extension does not exist, specify the encoder.
 
 ```go
 enc := toml.NewEncoder()
@@ -254,7 +254,7 @@ config.Load(file.NewSource(
 
 ### Read Config
 
-Read the entire config as a map
+Read the entire config as a map.
 
 ```go
 // retrieve map[string]interface{}
@@ -264,7 +264,7 @@ conf := config.Map()
 fmt.Println(conf["hosts"])
 ```
 
-Scan the config into a struct
+Scan the config into a struct.
 
 ```go
 type Host struct {
@@ -286,7 +286,7 @@ fmt.Println(conf.Hosts["database"].Address, conf.Hosts["database"].Port)
 
 ### Read Values
 
-Scan a value from the config into a struct
+Scan a value from the config into a struct.
 
 ```go
 type Host struct {
@@ -302,7 +302,7 @@ config.Get("hosts", "database").Scan(&host)
 fmt.Println(host.Address, host.Port)
 ```
 
-Read individual values as Go types
+Read individual values as Go types.
 
 ```go
 // Get address. Set default to localhost as fallback
@@ -389,10 +389,10 @@ and is part of the larger micro ecosystem of tooling.
 
 ### What's the difference between Encoder and Reader?
 
-The encoder is used by a backend source to encode/decode it's data. The reader uses encoders to decode data from multiple 
+The encoder is used by a backend source to encode/decode its data. The reader uses encoders to decode data from multiple 
 sources with different formats, it then merges them into a single encoding format. 
 
-In the case of a file source , we use the file extension to determine the config format so the encoder is not used. 
+In the case of a file source, we use the file extension to determine the config format so the encoder is not used. 
 
 In the case of consul, etcd or similar key-value source we may load from a prefix containing multiple keys which means 
 the source needs to understand the encoding so it can return a single changeset. 
