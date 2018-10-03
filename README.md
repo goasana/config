@@ -1,9 +1,9 @@
 # Config [![GoDoc](https://godoc.org/github.com/micro/go-config?status.svg)](https://godoc.org/github.com/micro/go-config)
 
-Go-config is a pluggable dynamic config library.
+Go Config is a pluggable dynamic config library.
 
 Most config in applications are statically configured or include complex logic to load from multiple sources. 
-Go-config makes this easy, pluggable and mergeable. You'll never have to deal with config in the same way again.
+Go Config makes this easy, pluggable and mergeable. You'll never have to deal with config in the same way again.
 
 ## Features
 
@@ -384,7 +384,7 @@ r := json.NewReader(
 
 ### How is this different from Viper?
 
-[Viper](https://github.com/spf13/viper) and go-config are solving the same problem. Go-config provides a different interface 
+[Viper](https://github.com/spf13/viper) and go-config are solving the same problem. Go Config provides a different interface 
 and is part of the larger micro ecosystem of tooling.
 
 ### What's the difference between Encoder and Reader?
