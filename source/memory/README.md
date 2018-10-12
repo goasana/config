@@ -27,7 +27,7 @@ Specify source with data
 
 ```go
 memorySource := memory.NewSource(
-	memory.WithData(data, "json"),
+	memory.WithData(data),
 )
 ```
 
