@@ -40,11 +40,7 @@ The following sources are supported:
 - [memory](https://github.com/micro/go-config/tree/master/source/memory) - read from memory
 - [microcli](https://github.com/micro/go-config/tree/master/source/microcli) - read from micro cli flags
 - [runtimevar](https://github.com/micro/go-config/tree/master/source/runtimevar) - read from Go Cloud runtimevar watcher
-
-TODO:
-
-- vault
-- git url
+- [url](https://github.com/micro/go-config/tree/master/source/url) - Read from http url
 
 ### ChangeSet
 
