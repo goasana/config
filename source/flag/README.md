@@ -29,8 +29,8 @@ Becomes
 ```go
 flagSource := flag.NewSource(
 	// optionally enable reading of unset flags and their default
-  // values into config, defaults to false
-  IncludeUnset(true)
+	// values into config, defaults to false
+	IncludeUnset(true)
 )
 ```
 
