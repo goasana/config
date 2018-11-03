@@ -27,7 +27,11 @@ Becomes
 ## New Source
 
 ```go
-flagSource := flag.NewSource()
+flagSource := flag.NewSource(
+	// optionally enable reading of unset flags and their default
+	// values into config, defaults to false
+	IncludeUnset(true)
+)
 ```
 
 ## Load Source

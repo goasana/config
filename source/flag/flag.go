@@ -19,7 +19,8 @@ func (fs *flagsrc) Read() (*source.ChangeSet, error) {
 	}
 
 	var changes map[string]interface{}
-	flag.Visit(func(f *flag.Flag) {
+
+	visitFn := func(f *flag.Flag) {
 		n := strings.ToLower(f.Name)
 		keys := strings.Split(n, "-")
 		reverse(keys)
@@ -36,7 +37,14 @@ func (fs *flagsrc) Read() (*source.ChangeSet, error) {
 
 		mergo.Map(&changes, tmp) // need to sort error handling
 		return
-	})
+	}
+
+	unset, ok := fs.opts.Context.Value(includeUnsetKey{}).(bool)
+	if ok && unset {
+		flag.VisitAll(visitFn)
+	} else {
+		flag.Visit(visitFn)
+	}
 
 	b, err := fs.opts.Encoder.Encode(changes)
 	if err != nil {
