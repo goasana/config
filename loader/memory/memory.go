@@ -127,14 +127,14 @@ func (m *memory) loaded() bool {
 }
 
 // reload reads the sets and creates new values
-func (m *memory) reload() {
+func (m *memory) reload() error {
 	m.Lock()
 
 	// merge sets
 	set, err := m.opts.Reader.Merge(m.sets...)
 	if err != nil {
 		m.Unlock()
-		return
+		return err
 	}
 
 	// set values
@@ -148,6 +148,8 @@ func (m *memory) reload() {
 
 	// update watchers
 	m.update()
+
+	return nil
 }
 
 func (m *memory) update() {
@@ -300,7 +302,9 @@ func (m *memory) Load(sources ...source.Source) error {
 		go m.watch(idx, source)
 	}
 
-	m.reload()
+	if err := m.reload(); err != nil {
+		gerrors = append(gerrors, err.Error())
+	}
 
 	// Return errors
 	if len(gerrors) != 0 {
