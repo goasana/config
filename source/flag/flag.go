@@ -22,7 +22,7 @@ func (fs *flagsrc) Read() (*source.ChangeSet, error) {
 
 	visitFn := func(f *flag.Flag) {
 		n := strings.ToLower(f.Name)
-		keys := strings.Split(n, "-")
+		keys := strings.FieldsFunc(n, split)
 		reverse(keys)
 
 		tmp := make(map[string]interface{})
@@ -60,6 +60,10 @@ func (fs *flagsrc) Read() (*source.ChangeSet, error) {
 	cs.Checksum = cs.Sum()
 
 	return cs, nil
+}
+
+func split(r rune) bool {
+	return r == '-' || r == '_'
 }
 
 func reverse(ss []string) {
