@@ -19,6 +19,8 @@ type consul struct {
 }
 
 var (
+	// DefaultPrefix is the prefix that consul keys will be assumed to have if you
+	// haven't specified one
 	DefaultPrefix = "/micro/config/"
 )
 
