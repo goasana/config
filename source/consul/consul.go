@@ -65,6 +65,7 @@ func (c *consul) Watch() (source.Watcher, error) {
 	return w, nil
 }
 
+// NewSource creates a new consul source
 func NewSource(opts ...source.Option) source.Source {
 	options := source.NewOptions(opts...)
 
