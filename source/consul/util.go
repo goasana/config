@@ -11,7 +11,7 @@ import (
 func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) (map[string]interface{}, error) {
 	data := make(map[string]interface{})
 
-	// consul guarantees lexographic order, so no need to sort
+	// consul guarantees lexicographic order, so no need to sort
 	for _, v := range kv {
 		pathString := strings.TrimPrefix(strings.TrimPrefix(v.Key, stripPrefix), "/")
 		var val map[string]interface{}
