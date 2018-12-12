@@ -11,42 +11,38 @@ import (
 func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) (map[string]interface{}, error) {
 	data := make(map[string]interface{})
 
+	// consul guarantees lexographic order, so no need to sort
 	for _, v := range kv {
-		// remove prefix if non empty, and ensure leading / is removed as well
-		vkey := strings.TrimPrefix(strings.TrimPrefix(v.Key, stripPrefix), "/")
-		// split on prefix
-		keys := strings.Split(vkey, "/")
+		pathString := strings.TrimPrefix(strings.TrimPrefix(v.Key, stripPrefix), "/")
+		var val map[string]interface{}
 
-		var vals interface{}
+		// ensure a valid value is stored at this location
 		if len(v.Value) > 0 {
-			if err := e.Decode(v.Value, &vals); err != nil {
-				return nil, fmt.Errorf("faild decode value. path: %s, error: %s", vkey, err)
+			if err := e.Decode(v.Value, &val); err != nil {
+				return nil, fmt.Errorf("faild decode value. path: %s, error: %s", pathString, err)
 			}
 		}
 
-		// set data for first iteration
-		kvals := data
+		// set target at the root
+		target := data
 
-		// iterate the keys and make maps
-		for i, k := range keys {
-			kval, ok := kvals[k].(map[string]interface{})
-			if !ok {
-				// create next map
-				kval = make(map[string]interface{})
-				// set it
-				kvals[k] = kval
+		// then descend to the target location, creating as we go, if need be
+		if pathString != "" {
+			path := strings.Split(pathString, "/")
+			// find (or create) the location we want to put this value at
+			for _, dir := range path {
+				if _, ok := target[dir]; !ok {
+					target[dir] = make(map[string]interface{})
+				}
+				target = target[dir].(map[string]interface{})
 			}
 
-			// last key: write vals
-			if l := len(keys) - 1; i == l {
-				kvals[k] = vals
-				break
-			}
-
-			// set kvals for next iterator
-			kvals = kval
 		}
 
+		// copy over the keys from the value
+		for k := range val {
+			target[k] = val[k]
+		}
 	}
 
 	return data, nil
