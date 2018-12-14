@@ -2,9 +2,9 @@
 
 The runtimevar source is a source for the [Go Cloud](https://github.com/google/go-cloud) runtimevar package
 
-This package takes a [driver.Watcher](https://godoc.org/github.com/google/go-cloud/runtimevar/driver#Watcher) 
-and then allows you to use it as a backend source. We expect the 
-[Snapshot](https://godoc.org/github.com/google/go-cloud/runtimevar#Snapshot) value to be `[]byte`. 
+This package takes a [driver.Watcher](https://godoc.org/gocloud.dev/runtimevar/driver#Watcher)
+and then allows you to use it as a backend source. We expect the
+[Snapshot](https://godoc.org/gocloud.dev/runtimevar#Snapshot) value to be `[]byte`.
 We use the built in encoder to decode the value. This defaults to json.
 
 ## Example
