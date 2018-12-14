@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/google/go-cloud/runtimevar"
-	"github.com/google/go-cloud/runtimevar/driver"
 	"github.com/micro/go-config/source"
+	"gocloud.dev/runtimevar"
+	"gocloud.dev/runtimevar/driver"
 )
 
 type rvSource struct {

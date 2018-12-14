@@ -3,8 +3,8 @@ package runtimevar
 import (
 	"context"
 
-	"github.com/google/go-cloud/runtimevar/driver"
 	"github.com/micro/go-config/source"
+	"gocloud.dev/runtimevar/driver"
 )
 
 type driverWatcherKey struct{}
