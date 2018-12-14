@@ -1,4 +1,4 @@
-// package runtimevar is the source for github.com/google/go-cloud/runtimevar
+// package runtimevar is the source for gocloud.dev/runtimevar
 package runtimevar
 
 import (
