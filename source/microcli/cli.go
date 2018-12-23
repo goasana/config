@@ -1,20 +1,24 @@
 package microcli
 
 import (
+	"flag"
+	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/imdario/mergo"
 	"github.com/micro/cli"
 	"github.com/micro/go-config/source"
+	"github.com/micro/go-micro/cmd"
 )
 
-type clisrc struct {
+type cliSource struct {
 	opts source.Options
 	ctx  *cli.Context
 }
 
-func (c *clisrc) Read() (*source.ChangeSet, error) {
+func (c *cliSource) Read() (*source.ChangeSet, error) {
 	var changes map[string]interface{}
 
 	for _, name := range c.ctx.GlobalFlagNames() {
@@ -70,16 +74,17 @@ func split(r rune) bool {
 	return r == '-' || r == '_'
 }
 
-func (c *clisrc) Watch() (source.Watcher, error) {
+func (c *cliSource) Watch() (source.Watcher, error) {
 	return source.NewNoopWatcher()
 }
 
-func (c *clisrc) String() string {
+func (c *cliSource) String() string {
 	return "microcli"
 }
 
 // NewSource returns a config source for integrating parsed flags from a micro/cli.Context.
-// Hyphens are delimiters for nesting, and all keys are lowercased.
+// Hyphens are delimiters for nesting, and all keys are lowercased. The assumption is that
+// command line flags have already been parsed.
 //
 // Example:
 //      cli.StringFlag{Name: "db-host"},
@@ -90,6 +95,49 @@ func (c *clisrc) String() string {
 //              "host": "localhost"
 //          }
 //      }
-func NewSource(ctx *cli.Context, opts ...source.Option) source.Source {
-	return &clisrc{opts: source.NewOptions(opts...), ctx: ctx}
+func NewSource(opts ...source.Option) source.Source {
+	options := source.NewOptions(opts...)
+
+	var ctx *cli.Context
+
+	c, ok := options.Context.Value(contextKey{}).(*cli.Context)
+	if ok {
+		ctx = c
+	}
+
+	// no context
+	if ctx == nil {
+		// get the default app/flags
+		app := cmd.App()
+		flags := app.Flags
+
+		// create flagset
+		set := flag.NewFlagSet(app.Name, flag.ContinueOnError)
+
+		// apply flags to set
+		for _, f := range flags {
+			f.Apply(set)
+		}
+
+		// parse flags
+		set.SetOutput(ioutil.Discard)
+		set.Parse(os.Args[1:])
+
+		// create context
+		ctx = cli.NewContext(app, set, nil)
+	}
+
+	return &cliSource{
+		ctx:  ctx,
+		opts: options,
+	}
+}
+
+// WithContext returns a new source with the context specified.
+// The assumption is that Context is retrieved within an app.Action function.
+func WithContext(ctx *cli.Context, opts ...source.Option) source.Source {
+	return &cliSource{
+		ctx:  ctx,
+		opts: source.NewOptions(opts...),
+	}
 }
