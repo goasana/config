@@ -41,12 +41,6 @@ func (w *watcher) Next() (*source.ChangeSet, error) {
 	// try get the event
 	select {
 	case event, _ := <-w.fw.Events:
-		/*
-			when 'backupcopy' option of vim is "no".
-			vim will rename the file and write a new one,
-			fsnotify stops watching the the named file,
-			should add watch again if the file exists
-		*/
 		if event.Op == fsnotify.Rename {
 			// check existence of file, and add watch again
 			_, err := os.Stat(event.Name)
