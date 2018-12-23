@@ -123,6 +123,9 @@ func NewSource(opts ...source.Option) source.Source {
 		set.SetOutput(ioutil.Discard)
 		set.Parse(os.Args[1:])
 
+		// normalise flags
+		normalizeFlags(app.Flags, set)
+
 		// create context
 		ctx = cli.NewContext(app, set, nil)
 	}
