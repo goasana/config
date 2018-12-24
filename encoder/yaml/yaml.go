@@ -1,7 +1,7 @@
 package yaml
 
 import (
-	yaml "gopkg.in/yaml.v2"
+	"github.com/ghodss/yaml"
 	"github.com/micro/go-config/encoder"
 )
 
