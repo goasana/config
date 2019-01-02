@@ -39,6 +39,7 @@ func update(e encoder.Encoder, data map[string]interface{}, v *mvccpb.KeyValue, 
 	// remove prefix if non empty, and ensure leading / is removed as well
 	vkey := strings.TrimPrefix(strings.TrimPrefix(string(v.Key), stripPrefix), "/")
 	// split on prefix
+	haveSplit := strings.Contains(vkey,"/")
 	keys := strings.Split(vkey, "/")
 
 	var vals interface{}
@@ -48,28 +49,42 @@ func update(e encoder.Encoder, data map[string]interface{}, v *mvccpb.KeyValue, 
 	kvals := data
 
 	// iterate the keys and make maps
-	for i, k := range keys {
-		kval, ok := kvals[k].(map[string]interface{})
-		if !ok {
-			// create next map
-			kval = make(map[string]interface{})
-			// set it
-			kvals[k] = kval
-		}
-
-		// last key: write vals
-		if l := len(keys) - 1; i == l {
-			switch action {
-			case "delete":
-				delete(kvals, k)
-			default:
-				kvals[k] = vals
+	if haveSplit {
+		for i, k := range keys {
+			kval, ok := kvals[k].(map[string]interface{})
+			if !ok {
+				// create next map
+				kval = make(map[string]interface{})
+				// set it
+				kvals[k] = kval
 			}
-			break
-		}
 
-		// set kvals for next iterator
-		kvals = kval
+			// last key: write vals
+			if l := len(keys) - 1; i == l {
+				switch action {
+				case "delete":
+					delete(kvals, k)
+				default:
+					kvals[k] = vals
+				}
+				break
+			}
+
+			// set kvals for next iterator
+			kvals = kval
+		}
+	} else if len(keys) == 1{
+		//fmt.Println("update vals ",vals)
+		//fmt.Println("update key: ",string(v.Key),"update v: ",string(v.Value))
+		switch action {
+		case "delete":
+			data = make(map[string]interface{})
+		default:
+			_v,ok := vals.(map[string]interface{})
+			if ok {
+				data = _v
+			}
+		}
 	}
 
 	return data
