@@ -39,7 +39,7 @@ func update(e encoder.Encoder, data map[string]interface{}, v *mvccpb.KeyValue, 
 	// remove prefix if non empty, and ensure leading / is removed as well
 	vkey := strings.TrimPrefix(strings.TrimPrefix(string(v.Key), stripPrefix), "/")
 	// split on prefix
-	haveSplit := strings.Contains(vkey,"/")
+	haveSplit := strings.Contains(vkey, "/")
 	keys := strings.Split(vkey, "/")
 
 	var vals interface{}
@@ -50,9 +50,9 @@ func update(e encoder.Encoder, data map[string]interface{}, v *mvccpb.KeyValue, 
 		case "delete":
 			data = make(map[string]interface{})
 		default:
-			_v,ok := vals.(map[string]interface{})
+			v, ok := vals.(map[string]interface{})
 			if ok {
-				data = _v
+				data = v
 			}
 		}
 		return data
