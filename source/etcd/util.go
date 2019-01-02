@@ -45,37 +45,7 @@ func update(e encoder.Encoder, data map[string]interface{}, v *mvccpb.KeyValue, 
 	var vals interface{}
 	e.Decode(v.Value, &vals)
 
-	// set data for first iteration
-	kvals := data
-
-	// iterate the keys and make maps
-	if haveSplit {
-		for i, k := range keys {
-			kval, ok := kvals[k].(map[string]interface{})
-			if !ok {
-				// create next map
-				kval = make(map[string]interface{})
-				// set it
-				kvals[k] = kval
-			}
-
-			// last key: write vals
-			if l := len(keys) - 1; i == l {
-				switch action {
-				case "delete":
-					delete(kvals, k)
-				default:
-					kvals[k] = vals
-				}
-				break
-			}
-
-			// set kvals for next iterator
-			kvals = kval
-		}
-	} else if len(keys) == 1{
-		//fmt.Println("update vals ",vals)
-		//fmt.Println("update key: ",string(v.Key),"update v: ",string(v.Value))
+	if !haveSplit && len(keys) == 1 {
 		switch action {
 		case "delete":
 			data = make(map[string]interface{})
@@ -85,6 +55,34 @@ func update(e encoder.Encoder, data map[string]interface{}, v *mvccpb.KeyValue, 
 				data = _v
 			}
 		}
+		return data
+	}
+
+	// set data for first iteration
+	kvals := data
+	// iterate the keys and make maps
+	for i, k := range keys {
+		kval, ok := kvals[k].(map[string]interface{})
+		if !ok {
+			// create next map
+			kval = make(map[string]interface{})
+			// set it
+			kvals[k] = kval
+		}
+
+		// last key: write vals
+		if l := len(keys) - 1; i == l {
+			switch action {
+			case "delete":
+				delete(kvals, k)
+			default:
+				kvals[k] = vals
+			}
+			break
+		}
+
+		// set kvals for next iterator
+		kvals = kval
 	}
 
 	return data
