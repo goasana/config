@@ -88,15 +88,18 @@ func NewSource(opts ...source.Option) source.Source {
 		}
 	}
 
-	username, _ := options.Context.Value(usernameKey{}).(string)
-	password, _ := options.Context.Value(passwordKey{}).(string)
+	config := cetcd.Config{
+		Endpoints: endpoints,
+	}
+
+	u, ok := options.Context.Value(authKey{}).(*authCreds)
+	if ok {
+		config.Username = u.Username
+		config.Password = u.Password
+	}
 
 	// use default config
-	client, err := cetcd.New(cetcd.Config{
-		Endpoints: endpoints,
-		Username:  username,
-		Password:  password,
-	})
+	client, err := cetcd.New(config)
 
 	prefix := DefaultPrefix
 	sp := ""

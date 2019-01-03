@@ -9,18 +9,12 @@ import (
 type addressKey struct{}
 type prefixKey struct{}
 type stripPrefixKey struct{}
-type usernameKey struct{}
-type passwordKey struct{}
+type authKey struct{}
 
-/*
-type (
-	addressKey     struct{}
-	prefixKey      struct{}
-	stripPrefixKey struct{}
-	usernameKey    struct{}
-	passwordKey    struct{}
-)
-*/
+type authCreds struct {
+	Username string
+	Password string
+}
 
 // WithAddress sets the consul address
 func WithAddress(a string) source.Option {
@@ -53,20 +47,12 @@ func StripPrefix(strip bool) source.Option {
 	}
 }
 
-func WithUsername(name string) source.Option {
+// Auth allows you to specify username/password
+func Auth(username, password string) source.Option {
 	return func(o *source.Options) {
 		if o.Context == nil {
 			o.Context = context.Background()
 		}
-		o.Context = context.WithValue(o.Context, userNameKey{}, name)
-	}
-}
-
-func WithPassword(pass string) source.Option {
-	return func(o *source.Options) {
-		if o.Context == nil {
-			o.Context = context.Background()
-		}
-		o.Context = context.WithValue(o.Context, passwordKey{}, pass)
+		o.Context = context.WithValue(o.Context, authKey{}, &authCreds{Username: username, Password: password})
 	}
 }
