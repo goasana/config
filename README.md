@@ -20,7 +20,7 @@ a single view. This massively simplifies priority order loading and changes base
 You don't have to handle ad-hoc hup reloading or whatever else, just keep reading the config and watch for changes if you need 
 to be notified.
 
-- **Safe Recovery** - In case config loads badly or is completely wiped away for some unknown reason, you can specify fallback 
+- **Sane Defaults** - In case config loads badly or is completely wiped away for some unknown reason, you can specify fallback 
 values when accessing any config values directly. This ensures you'll always be reading some sane default in the event of a problem.
 
 ## Getting Started
