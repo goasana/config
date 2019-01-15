@@ -22,9 +22,8 @@ type jsonValue struct {
 
 func newValues(ch *source.ChangeSet) (reader.Values, error) {
 	sj := simple.New()
-	err := sj.UnmarshalJSON(ch.Data)
-	if err != nil {
-		return nil, err
+	if err := sj.UnmarshalJSON(ch.Data); err != nil {
+		sj.SetPath(nil, string(ch.Data))
 	}
 	return &jsonValues{ch, sj}, nil
 }
