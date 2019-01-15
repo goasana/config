@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	simple "github.com/bitly/go-simplejson"
@@ -159,6 +160,13 @@ func (j *jsonValue) Duration(def time.Duration) time.Duration {
 }
 
 func (j *jsonValue) StringSlice(def []string) []string {
+	v, err := j.Json.String()
+	if err == nil {
+		sl := strings.Split(v, ",")
+		if len(sl) > 1 {
+			return sl
+		}
+	}
 	return j.Json.MustStringArray(def)
 }
 
