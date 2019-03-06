@@ -9,7 +9,7 @@ We expect the use of the `micro/cli` package. Upper case flags will be lower cas
 ### Example
 
 ```go
-micro.Flags([]cli.Flag{
+micro.Flags(
     cli.StringFlag{
         Name: "database-address",
         Value: "127.0.0.1",
@@ -20,7 +20,7 @@ micro.Flags([]cli.Flag{
         Value: 3306,
         Usage: "the db port",
     },
-})
+)
 ```
 
 Becomes
@@ -44,20 +44,22 @@ func main() {
     // New Service
     service := micro.NewService(
         micro.Name("example"),
-        micro.Flags([]cli.Flag{
+        micro.Flags(
             cli.StringFlag{
                 Name: "database-address",
                 Value: "127.0.0.1",
                 Usage: "the db address",
             },
-        }),
+        ),
     )
 
     var clisrc source.Source
 
     service.Init(
         micro.Action(func(c *cli.Context) {
-            clisrc = microcli.NewSource(c)
+            clisrc = microcli.NewSource(
+                microcli.Context(c),
+	    )
             // Alternatively, just setup your config right here
         }),
     )
