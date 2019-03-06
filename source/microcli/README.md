@@ -58,7 +58,7 @@ func main() {
     service.Init(
         micro.Action(func(c *cli.Context) {
             clisrc = microcli.NewSource(
-				microcli.Context(c),
+                microcli.Context(c),
 	    )
             // Alternatively, just setup your config right here
         }),
