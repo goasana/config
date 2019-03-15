@@ -8,6 +8,7 @@ import (
 
 	"github.com/micro/go-config/source"
 	cetcd "go.etcd.io/etcd/clientv3"
+	"go.etcd.io/etcd/mvcc/mvccpb"
 )
 
 // Currently a single etcd reader
@@ -37,7 +38,12 @@ func (c *etcd) Read() (*source.ChangeSet, error) {
 		return nil, fmt.Errorf("source not found: %s", c.prefix)
 	}
 
-	data := makeMap(c.opts.Encoder, rsp.Kvs, c.stripPrefix)
+	var kvs []*mvccpb.KeyValue
+	for _, v := range rsp.Kvs {
+		kvs = append(kvs, (*mvccpb.KeyValue)(v))
+	}
+
+	data := makeMap(c.opts.Encoder, kvs, c.stripPrefix)
 
 	b, err := c.opts.Encoder.Encode(data)
 	if err != nil {

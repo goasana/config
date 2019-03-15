@@ -14,11 +14,11 @@ func makeEvMap(e encoder.Encoder, data map[string]interface{}, kv []*clientv3.Ev
 	}
 
 	for _, v := range kv {
-		switch v.Type {
+		switch mvccpb.Event_EventType(v.Type) {
 		case mvccpb.DELETE:
-			data = update(e, data, v.Kv, "delete", stripPrefix)
+			data = update(e, data, (*mvccpb.KeyValue)(v.Kv), "delete", stripPrefix)
 		default:
-			data = update(e, data, v.Kv, "insert", stripPrefix)
+			data = update(e, data, (*mvccpb.KeyValue)(v.Kv), "insert", stripPrefix)
 		}
 	}
 
