@@ -49,7 +49,13 @@ func (e *env) Read() (*source.ChangeSet, error) {
 		tmp := make(map[string]interface{})
 		for i, k := range keys {
 			if i == 0 {
-				tmp[k] = value
+				if intValue, err := strconv.Atoi(value); err == nil {
+					tmp[k] = intValue
+				} else if boolValue, err := strconv.ParseBool(value); err == nil {
+					tmp[k] = boolValue
+				} else {
+					tmp[k] = value
+				}
 				continue
 			}
 
