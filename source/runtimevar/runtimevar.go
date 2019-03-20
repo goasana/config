@@ -18,7 +18,7 @@ type rvSource struct {
 }
 
 func (rv *rvSource) Read() (*source.ChangeSet, error) {
-	s, err := rv.v.Watch(context.Background())
+	s, err := rv.v.Latest(context.Background())
 	if err != nil {
 		return nil, err
 	}

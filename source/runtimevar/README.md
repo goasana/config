@@ -1,6 +1,6 @@
 # Runtimevar Source
 
-The runtimevar source is a source for the [Go Cloud](https://github.com/google/go-cloud) runtimevar package.
+The runtimevar source is a source for the [Go Cloud Development Kit](https://github.com/google/go-cloud) runtimevar package.
 
 This package takes a [runtimevar.Variable](https://godoc.org/gocloud.dev/runtimevar/#Variable)
 and then allows you to use it as a backend source. When constructing your
@@ -10,7 +10,7 @@ to be `[]byte`. We then use the built in go-config encoder to decode the value. 
 
 ## New Source
 
-Specify a runtimevar source with the Go Cloud runtimevar.Variable. It will panic if not specified.
+Specify a runtimevar source with the Go CDK runtimevar.Variable. It will panic if not specified.
 
 ```go
 // See https://godoc.org/gocloud.dev/runtimevar for examples on how to create
