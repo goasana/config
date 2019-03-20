@@ -1,7 +1,6 @@
 module github.com/micro/go-config
 
 require (
-	cloud.google.com/go v0.37.0 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.9.2 // indirect
 	contrib.go.opencensus.io/integrations/ocsql v0.1.4 // indirect
 	dmitri.shuralyov.com/app/changes v0.0.0-20181114035150-5af16e21babb // indirect
@@ -103,8 +102,6 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/miekg/dns v1.1.6 // indirect
 	github.com/mitchellh/gox v1.0.0 // indirect
-	github.com/nats-io/gnatsd v1.4.1 // indirect
-	github.com/nats-io/go-nats v1.7.2 // indirect
 	github.com/nats-io/go-nats-streaming v0.4.2 // indirect
 	github.com/nats-io/nats-streaming-server v0.12.0 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
@@ -145,7 +142,7 @@ require (
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
 	go.etcd.io/etcd v3.3.12+incompatible
 	go4.org v0.0.0-20190313082347-94abd6928b1d // indirect
-	gocloud.dev v0.11.0
+	gocloud.dev v0.12.0
 	golang.org/x/build v0.0.0-20190314215453-3ce8d48fad73 // indirect
 	golang.org/x/crypto v0.0.0-20190313024323-a1f597ede03a // indirect
 	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3 // indirect
