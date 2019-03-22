@@ -38,7 +38,7 @@ func newWatcher(n, ns string, c *kubernetes.Clientset, opts source.Options) (sou
 	lw := cache.NewListWatchFromClient(w.client.CoreV1().RESTClient(), "ConfigMap", w.namespace, fields.OneTermEqualSelector("metadata.name", w.name))
 	st, ct := cache.NewInformer(
 		lw,
-		&v12.ConfigMaps{},
+		&v12.ConfigMap{},
 		time.Second*30,
 		cache.ResourceEventHandlerFuncs{
 			UpdateFunc: w.handle,
