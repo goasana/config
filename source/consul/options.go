@@ -9,6 +9,8 @@ import (
 type addressKey struct{}
 type prefixKey struct{}
 type stripPrefixKey struct{}
+type dcKey struct{}
+type tokenKey struct{}
 
 // WithAddress sets the consul address
 func WithAddress(a string) source.Option {
@@ -38,5 +40,24 @@ func StripPrefix(strip bool) source.Option {
 		}
 
 		o.Context = context.WithValue(o.Context, stripPrefixKey{}, strip)
+	}
+}
+
+func WithDC(p string) source.Option {
+	return func(o *source.Options) {
+		if o.Context == nil {
+			o.Context = context.Background()
+		}
+		o.Context = context.WithValue(o.Context, dcKey{}, p)
+	}
+}
+
+// WithToken sets the key token to use
+func WithToken(p string) source.Option {
+	return func(o *source.Options) {
+		if o.Context == nil {
+			o.Context = context.Background()
+		}
+		o.Context = context.WithValue(o.Context, tokenKey{}, p)
 	}
 }
