@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"github.com/micro/go-config/source/consul"
 	"os"
 	"path/filepath"
 	"strings"
@@ -70,9 +69,9 @@ func TestLoadWithInvalidFile(t *testing.T) {
 }
 
 func TestConsul(t *testing.T) {
-	consulSource := consul.NewSource(
+	/*consulSource := consul.NewSource(
 		// optionally specify consul address; default to localhost:8500
-		consul.WithAddress("133.150.38.111:8500"),
+		consul.WithAddress("131.150.38.111:8500"),
 		// optionally specify prefix; defaults to /micro/config
 		consul.WithPrefix("/project"),
 		// optionally strip the provided prefix from the keys, defaults to false
@@ -96,5 +95,5 @@ func TestConsul(t *testing.T) {
 
 	v := conf.Get("project", "dc111", "port")
 
-	t.Log("v: ", v.Int(13))
+	t.Log("v: ", v.Int(13))*/
 }
