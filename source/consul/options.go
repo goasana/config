@@ -43,7 +43,7 @@ func StripPrefix(strip bool) source.Option {
 	}
 }
 
-func WithDC(p string) source.Option {
+func WithDatacenter(p string) source.Option {
 	return func(o *source.Options) {
 		if o.Context == nil {
 			o.Context = context.Background()

@@ -76,7 +76,7 @@ func TestConsul(t *testing.T) {
 		consul.WithPrefix("/project"),
 		// optionally strip the provided prefix from the keys, defaults to false
 		consul.StripPrefix(true),
-		consul.WithDC("dc1"),
+		consul.WithDatacenter("dc1"),
 		consul.WithToken("xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"),
 	)
 
@@ -96,4 +96,6 @@ func TestConsul(t *testing.T) {
 	v := conf.Get("project", "dc111", "port")
 
 	t.Log("v: ", v.Int(13))*/
+
+	t.Log("OK")
 }
