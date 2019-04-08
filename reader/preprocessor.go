@@ -5,8 +5,8 @@ import (
 	"regexp"
 )
 
-func ReadEnvVars(raw []byte) ([]byte, error) {
-	re := regexp.MustCompile(`\$\{([A-Za-z0-9_-]+)\}`)
+func ReplaceEnvVars(raw []byte) ([]byte, error) {
+	re := regexp.MustCompile(`\$\{([A-Za-z0-9_]+)\}`)
 	if re.Match(raw) {
 		dataS := string(raw)
 		res := re.ReplaceAllStringFunc(dataS, replaceEnvVars)
