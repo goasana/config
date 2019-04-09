@@ -16,6 +16,7 @@ func TestReplaceEnvVars(t *testing.T) {
 		expected string
 		data     []byte
 	}{
+		// Right use cases
 		{
 			`{"foo": "bar", "baz": {"bar": "cat"}}`,
 			[]byte(`{"foo": "bar", "baz": {"bar": "${myBar}"}}`),
@@ -32,6 +33,7 @@ func TestReplaceEnvVars(t *testing.T) {
 			`{"foo": "bar", "baz": {"bar": "cat"}}`,
 			[]byte(`{"foo": "bar", "baz": {"bar": "${myBar_}"}}`),
 		},
+		// Wrong use cases
 		{
 			`{"foo": "bar", "baz": {"bar": "${myBar-}"}}`,
 			[]byte(`{"foo": "bar", "baz": {"bar": "${myBar-}"}}`),
@@ -39,6 +41,23 @@ func TestReplaceEnvVars(t *testing.T) {
 		{
 			`{"foo": "bar", "baz": {"bar": "${}"}}`,
 			[]byte(`{"foo": "bar", "baz": {"bar": "${}"}}`),
+		},
+		{
+			`{"foo": "bar", "baz": {"bar": "$sss}"}}`,
+			[]byte(`{"foo": "bar", "baz": {"bar": "$sss}"}}`),
+		},
+		{
+			`{"foo": "bar", "baz": {"bar": "${sss"}}`,
+			[]byte(`{"foo": "bar", "baz": {"bar": "${sss"}}`),
+		},
+		{
+			`{"foo": "bar", "baz": {"bar": "{something}"}}`,
+			[]byte(`{"foo": "bar", "baz": {"bar": "{something}"}}`),
+		},
+		// Use cases without replace env vars
+		{
+			`{"foo": "bar", "baz": {"bar": "cat"}}`,
+			[]byte(`{"foo": "bar", "baz": {"bar": "cat"}}`),
 		},
 	}
 
