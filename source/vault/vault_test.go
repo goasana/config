@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestMakeMap(t *testing.T) {
+func TestVaultMakeMap(t *testing.T) {
 	tt := []struct {
 		name       string
 		expected   []byte
@@ -49,7 +49,7 @@ func TestMakeMap(t *testing.T) {
 	}
 }
 
-func TestConfigmap_Read(t *testing.T) {
+func TestVault_Read(t *testing.T) {
 	if tr := os.Getenv("TRAVIS"); len(tr) > 0 {
 		t.Skip()
 	}
@@ -102,7 +102,7 @@ func TestConfigmap_Read(t *testing.T) {
 	}
 }
 
-func TestConfigmap_String(t *testing.T) {
+func TestVault_String(t *testing.T) {
 	source := NewSource()
 
 	if source.String() != "vault" {
@@ -110,7 +110,7 @@ func TestConfigmap_String(t *testing.T) {
 	}
 }
 
-func TestNewSource(t *testing.T) {
+func TestVaultNewSource(t *testing.T) {
 	if tr := os.Getenv("TRAVIS"); len(tr) > 0 {
 		t.Skip()
 	}
