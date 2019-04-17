@@ -184,7 +184,7 @@ func (m *memory) Snapshot() (*loader.Snapshot, error) {
 	}
 
 	// make copy
-	m.RUnlock()
+	m.RLock()
 	snap := loader.Copy(m.snap)
 	m.RUnlock()
 
