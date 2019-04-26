@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"context"
-
+	"crypto/tls"
 	"github.com/micro/go-config/source"
 )
 
@@ -26,5 +26,15 @@ func WithPath(p string) source.Option {
 			o.Context = context.Background()
 		}
 		o.Context = context.WithValue(o.Context, pathKey{}, p)
+	}
+}
+
+// WithTLS sets the TLS config for the service
+func WithTLS(t *tls.Config) source.Option {
+	return func(o *source.Options) {
+		if o.Context == nil {
+			o.Context = context.Background()
+		}
+		o.Context = context.WithValue(o.Context, tls.Config{}, t)
 	}
 }
