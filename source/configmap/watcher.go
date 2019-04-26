@@ -69,7 +69,7 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 		Format:    w.opts.Encoder.String(),
 		Source:    w.name,
 		Data:      b,
-		Timestamp: newCmp.(v12.ConfigMap).CreationTimestamp.Time,
+		Timestamp: newCmp.(*v12.ConfigMap).CreationTimestamp.Time,
 	}
 	cs.Checksum = cs.Sum()
 
