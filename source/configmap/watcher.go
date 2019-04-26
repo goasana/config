@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/micro/go-config/source"
+	"github.com/qwiltech/go-config/source"
 	v12 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/client-go/kubernetes"

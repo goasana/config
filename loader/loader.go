@@ -4,8 +4,8 @@ package loader
 import (
 	"context"
 
-	"github.com/micro/go-config/reader"
-	"github.com/micro/go-config/source"
+	"github.com/qwiltech/go-config/reader"
+	"github.com/qwiltech/go-config/source"
 )
 
 // Loader manages loading sources

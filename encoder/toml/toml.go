@@ -4,7 +4,7 @@ import (
 	"bytes"
 
 	"github.com/BurntSushi/toml"
-	"github.com/micro/go-config/encoder"
+	"github.com/qwiltech/go-config/encoder"
 )
 
 type tomlEncoder struct{}

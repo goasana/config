@@ -3,7 +3,7 @@ package json
 import (
 	"testing"
 
-	"github.com/micro/go-config/source"
+	"github.com/qwiltech/go-config/source"
 )
 
 func TestValues(t *testing.T) {

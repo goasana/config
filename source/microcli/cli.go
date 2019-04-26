@@ -9,7 +9,7 @@ import (
 
 	"github.com/imdario/mergo"
 	"github.com/micro/cli"
-	"github.com/micro/go-config/source"
+	"github.com/qwiltech/go-config/source"
 	"github.com/micro/go-micro/cmd"
 )
 

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/micro/go-config/source"
+	"github.com/qwiltech/go-config/source"
 )
 
 type urlSource struct {
