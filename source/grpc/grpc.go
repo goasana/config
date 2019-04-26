@@ -2,6 +2,8 @@ package grpc
 
 import (
 	"context"
+	"crypto/tls"
+	"google.golang.org/grpc/credentials"
 
 	"github.com/micro/go-config/source"
 	proto "github.com/micro/go-config/source/grpc/proto"
@@ -9,9 +11,10 @@ import (
 )
 
 type grpcSource struct {
-	addr string
-	path string
-	opts source.Options
+	addr      string
+	path      string
+	opts      source.Options
+	tlsConfig *tls.Config
 }
 
 var (
@@ -20,7 +23,17 @@ var (
 )
 
 func (g *grpcSource) Read() (*source.ChangeSet, error) {
-	c, err := grpc.Dial(g.addr)
+
+	var opts []grpc.DialOption
+
+	// check if secure is necessary
+	if g.tlsConfig != nil {
+		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(g.tlsConfig)))
+	} else {
+		opts = append(opts, grpc.WithInsecure())
+	}
+
+	c, err := grpc.Dial(g.addr, opts...)
 	if err != nil {
 		return nil, err
 	}
