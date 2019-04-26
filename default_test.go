@@ -67,3 +67,35 @@ func TestLoadWithInvalidFile(t *testing.T) {
 		t.Fatalf("Expected error to contain the unexisting file but got %v", err)
 	}
 }
+
+func TestConsul(t *testing.T) {
+	/*consulSource := consul.NewSource(
+		// optionally specify consul address; default to localhost:8500
+		consul.WithAddress("131.150.38.111:8500"),
+		// optionally specify prefix; defaults to /micro/config
+		consul.WithPrefix("/project"),
+		// optionally strip the provided prefix from the keys, defaults to false
+		consul.StripPrefix(true),
+		consul.WithDatacenter("dc1"),
+		consul.WithToken("xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"),
+	)
+
+	// Create new config
+	conf := NewConfig()
+
+	// Load file source
+	err := conf.Load(consulSource)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	m := conf.Map()
+	t.Log("m: ", m)
+
+	v := conf.Get("project", "dc111", "port")
+
+	t.Log("v: ", v.Int(13))*/
+
+	t.Log("OK")
+}

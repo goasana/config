@@ -87,6 +87,16 @@ func NewSource(opts ...source.Option) source.Source {
 		}
 	}
 
+	dc, ok := options.Context.Value(dcKey{}).(string)
+	if ok {
+		config.Datacenter = dc
+	}
+
+	token, ok := options.Context.Value(tokenKey{}).(string)
+	if ok {
+		config.Token = token
+	}
+
 	// create the client
 	client, _ := api.NewClient(config)
 
