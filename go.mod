@@ -18,8 +18,8 @@ require (
 	gocloud.dev v0.12.0
 	golang.org/x/net v0.0.0-20190420063019-afa5a82059c6
 	google.golang.org/grpc v1.20.1
-	k8s.io/api v0.0.0-20190419092548-c5cad27821f6
-	k8s.io/apimachinery v0.0.0-20190419212445-b874eabb9a4e
+	k8s.io/api v0.0.0-20190313235455-40a48860b5ab
+	k8s.io/apimachinery v0.0.0-20190313205120-d7deff9243b1
 	k8s.io/client-go v11.0.0+incompatible
 	k8s.io/utils v0.0.0-20190308190857-21c4ce38f2a7 // indirect
 )
