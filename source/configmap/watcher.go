@@ -58,7 +58,7 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 		return
 	}
 
-	data := makeMap(newCmp.(v12.ConfigMap).Data)
+	data := makeMap(newCmp.(*v12.ConfigMap).Data)
 
 	b, err := w.opts.Encoder.Encode(data)
 	if err != nil {
