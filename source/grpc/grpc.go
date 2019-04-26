@@ -15,6 +15,7 @@ type grpcSource struct {
 	path      string
 	opts      source.Options
 	tlsConfig *tls.Config
+	client    *grpc.ClientConn
 }
 
 var (
@@ -22,7 +23,7 @@ var (
 	DefaultAddress = "localhost:8080"
 )
 
-func (g *grpcSource) Read() (*source.ChangeSet, error) {
+func (g *grpcSource) Read() (set *source.ChangeSet, err error) {
 
 	var opts []grpc.DialOption
 
@@ -33,11 +34,11 @@ func (g *grpcSource) Read() (*source.ChangeSet, error) {
 		opts = append(opts, grpc.WithInsecure())
 	}
 
-	c, err := grpc.Dial(g.addr, opts...)
+	g.client, err = grpc.Dial(g.addr, opts...)
 	if err != nil {
 		return nil, err
 	}
-	cl := proto.NewSourceClient(c)
+	cl := proto.NewSourceClient(g.client)
 	rsp, err := cl.Read(context.Background(), &proto.ReadRequest{
 		Path: g.path,
 	})
@@ -48,11 +49,7 @@ func (g *grpcSource) Read() (*source.ChangeSet, error) {
 }
 
 func (g *grpcSource) Watch() (source.Watcher, error) {
-	c, err := grpc.Dial(g.addr)
-	if err != nil {
-		return nil, err
-	}
-	cl := proto.NewSourceClient(c)
+	cl := proto.NewSourceClient(g.client)
 	rsp, err := cl.Watch(context.Background(), &proto.WatchRequest{
 		Path: g.path,
 	})
