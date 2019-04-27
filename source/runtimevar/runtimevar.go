@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/qwiltech/go-config/source"
+	"github.com/micro/go-config/source"
 	"gocloud.dev/runtimevar"
 )
 

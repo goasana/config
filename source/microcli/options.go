@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/micro/cli"
-	"github.com/qwiltech/go-config/source"
+	"github.com/micro/go-config/source"
 )
 
 type contextKey struct{}

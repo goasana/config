@@ -4,7 +4,7 @@ The gRPC source reads from a gRPC server
 
 ## Server
 
-A gRPC source server should implement the [`Source`](https://github.com/qwiltech/go-config/blob/master/source/grpc/proto/grpc.proto#L3L6) proto interface.
+A gRPC source server should implement the [`Source`](https://github.com/micro/go-config/blob/master/source/grpc/proto/grpc.proto#L3L6) proto interface.
 
 ```
 service Source {

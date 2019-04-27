@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/qwiltech/go-config/source/file"
+	"github.com/micro/go-config/source/file"
 )
 
 func createFileForTest(t *testing.T) *os.File {

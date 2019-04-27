@@ -3,7 +3,7 @@ package etcd
 import (
 	"strings"
 
-	"github.com/qwiltech/go-config/encoder"
+	"github.com/micro/go-config/encoder"
 	"go.etcd.io/etcd/clientv3"
 	"go.etcd.io/etcd/mvcc/mvccpb"
 )

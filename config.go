@@ -4,10 +4,10 @@ package config
 import (
 	"context"
 
-	"github.com/qwiltech/go-config/loader"
-	"github.com/qwiltech/go-config/reader"
-	"github.com/qwiltech/go-config/source"
-	"github.com/qwiltech/go-config/source/file"
+	"github.com/micro/go-config/loader"
+	"github.com/micro/go-config/reader"
+	"github.com/micro/go-config/source"
+	"github.com/micro/go-config/source/file"
 )
 
 // Config is an interface abstraction for dynamic configuration
