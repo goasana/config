@@ -11,6 +11,7 @@ type prefixKey struct{}
 type nameKey struct{}
 type namespaceKey struct{}
 
+// WithNamespace is an option to add namespace of configmap
 func WithNamespace(s string) source.Option {
 	return func(o *source.Options) {
 		if o.Context == nil {
@@ -20,6 +21,7 @@ func WithNamespace(s string) source.Option {
 	}
 }
 
+// WithName is an option to add name of configmap
 func WithName(s string) source.Option {
 	return func(o *source.Options) {
 		if o.Context == nil {
