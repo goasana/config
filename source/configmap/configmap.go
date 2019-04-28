@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/micro/go-config/source"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -18,6 +18,7 @@ type configmap struct {
 	configPath string
 }
 
+// Predefined variables
 var (
 	DefaultName       = "micro"
 	DefaultConfigPath = ""
@@ -68,6 +69,7 @@ func (k *configmap) Watch() (source.Watcher, error) {
 	return w, nil
 }
 
+// NewSource is a factory function
 func NewSource(opts ...source.Option) source.Source {
 	var (
 		options    = source.NewOptions(opts...)

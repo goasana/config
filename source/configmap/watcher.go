@@ -35,7 +35,7 @@ func newWatcher(n, ns string, c *kubernetes.Clientset, opts source.Options) (sou
 		stop:      make(chan struct{}),
 	}
 
-	lw := cache.NewListWatchFromClient(w.client.CoreV1().RESTClient(), "ConfigMap", w.namespace, fields.OneTermEqualSelector("metadata.name", w.name))
+	lw := cache.NewListWatchFromClient(w.client.CoreV1().RESTClient(), "configmaps", w.namespace, fields.OneTermEqualSelector("metadata.name", w.name))
 	st, ct := cache.NewInformer(
 		lw,
 		&v12.ConfigMap{},
@@ -58,7 +58,7 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 		return
 	}
 
-	data := makeMap(newCmp.(v12.ConfigMap).Data)
+	data := makeMap(newCmp.(*v12.ConfigMap).Data)
 
 	b, err := w.opts.Encoder.Encode(data)
 	if err != nil {
@@ -69,7 +69,7 @@ func (w *watcher) handle(oldCmp interface{}, newCmp interface{}) {
 		Format:    w.opts.Encoder.String(),
 		Source:    w.name,
 		Data:      b,
-		Timestamp: newCmp.(v12.ConfigMap).CreationTimestamp.Time,
+		Timestamp: newCmp.(*v12.ConfigMap).CreationTimestamp.Time,
 	}
 	cs.Checksum = cs.Sum()
 
