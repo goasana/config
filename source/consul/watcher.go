@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/consul/api"
-	"github.com/hashicorp/consul/watch"
+	"github.com/hashicorp/consul/api/watch"
 	"github.com/micro/go-config/encoder"
 	"github.com/micro/go-config/source"
 )
