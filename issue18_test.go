@@ -30,10 +30,11 @@ func TestIssue18(t *testing.T) {
 	fh := createFileForIssue18(t, `{
   "amqp": {
     "host": "rabbit.platform",
-    "port": 80
+    "port": "${AMQP_PORT}"
   },
   "handler": {
-    "exchange": "springCloudBus"
+    "exchange": "springCloudBus",
+    "init": "${HANDLER_INIT||start}"
   }
 }`)
 	path := fh.Name()
@@ -42,6 +43,7 @@ func TestIssue18(t *testing.T) {
 		_ = os.Remove(path)
 	}()
 	_ = os.Setenv("AMQP_HOST", "rabbit.testing.com")
+	_ = os.Setenv("AMQP_PORT", "80")
 
 	conf := NewConfig()
 	_ = conf.Load(
@@ -56,5 +58,19 @@ func TestIssue18(t *testing.T) {
 		t.Fatalf("Expected %v but got %v",
 			"rabbit.testing.com",
 			actualHost)
+	}
+
+	actualPort := conf.Get("amqp", "port").Int()
+	if actualPort != 80 {
+		t.Fatalf("Expected %v but got %v",
+			80,
+			actualPort)
+	}
+
+	actualHandlerInit := conf.Get("handler", "init").String()
+	if actualHandlerInit != "start" {
+		t.Fatalf("Expected %v but got %v",
+			"start",
+			actualHandlerInit)
 	}
 }
