@@ -2,7 +2,7 @@ package vault
 
 import (
 	"fmt"
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/source"
 	"net"
 	"net/url"
 	"strings"

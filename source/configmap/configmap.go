@@ -4,7 +4,8 @@ package configmap
 import (
 	"fmt"
 
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/source"
+
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -20,7 +21,7 @@ type configmap struct {
 
 // Predefined variables
 var (
-	DefaultName       = "micro"
+	DefaultName       = "asana"
 	DefaultConfigPath = ""
 	DefaultNamespace  = "default"
 )

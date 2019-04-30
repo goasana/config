@@ -4,8 +4,8 @@ package loader
 import (
 	"context"
 
-	"github.com/micro/go-config/reader"
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/reader"
+	"github.com/goasana/config/source"
 )
 
 // Loader manages loading sources

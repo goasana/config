@@ -4,12 +4,17 @@ import (
 	"bytes"
 
 	"github.com/BurntSushi/toml"
-	"github.com/micro/go-config/encoder"
+	"github.com/goasana/config/encoder"
 )
+
+func init() {
+	e := NewEncoder()
+	encoder.Register(e.String(), e)
+}
 
 type tomlEncoder struct{}
 
-func (t tomlEncoder) Encode(v interface{}) ([]byte, error) {
+func Encode(v interface{}) ([]byte, error) {
 	b := bytes.NewBuffer(nil)
 	defer b.Reset()
 	err := toml.NewEncoder(b).Encode(v)
@@ -19,8 +24,16 @@ func (t tomlEncoder) Encode(v interface{}) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-func (t tomlEncoder) Decode(d []byte, v interface{}) error {
+func (t tomlEncoder) Encode(v interface{}, hasIndent ...bool) ([]byte, error) {
+	return Encode(v)
+}
+
+func Decode(d []byte, v interface{}) error {
 	return toml.Unmarshal(d, v)
+}
+
+func (t tomlEncoder) Decode(d []byte, v interface{}) error {
+	return Decode(d, v)
 }
 
 func (t tomlEncoder) String() string {

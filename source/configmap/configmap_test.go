@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/micro/go-config"
+	"github.com/goasana/config"
 )
 
 func TestGetClient(t *testing.T) {
@@ -138,9 +138,9 @@ func TestConfigmap_Read(t *testing.T) {
 		namespace string
 	}{
 		{name: "read data with source default values", sname: DefaultName, namespace: DefaultNamespace},
-		{name: "read data with source with custom configmap name", sname: "micro-config", namespace: DefaultNamespace},
+		{name: "read data with source with custom configmap name", sname: "asana-config", namespace: DefaultNamespace},
 		{name: "read data with source with custom namespace", sname: DefaultName, namespace: "kube-public"},
-		{name: "read data with source with custom configmap name and namespace", sname: "micro-config", namespace: "kube-public"},
+		{name: "read data with source with custom configmap name and namespace", sname: "asana-config", namespace: "kube-public"},
 	}
 
 	for _, tc := range tt {

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	simple "github.com/bitly/go-simplejson"
-	"github.com/micro/go-config/reader"
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/reader"
+	"github.com/goasana/config/source"
 )
 
 type jsonValues struct {
@@ -30,16 +30,32 @@ func newValues(ch *source.ChangeSet) (reader.Values, error) {
 	return &jsonValues{ch, sj}, nil
 }
 
-func newValue(s *simple.Json) reader.Value {
-	if s == nil {
-		s = simple.New()
-	}
-	return &jsonValue{s}
+func (j *jsonValues) Get(path ...string) reader.Value {
+	return &jsonValue{j.getPath(path...)}
 }
 
-func (j *jsonValues) Get(path ...string) reader.Value {
-	return &jsonValue{j.sj.GetPath(path...)}
+func (j *jsonValues) getPath(branch ...string) *simple.Json {
+	jin := j.sj
+	for _, p := range branch {
+		jin = j.get(p, jin)
+	}
+
+	return jin
 }
+
+func (j *jsonValues) get(key string, sj *simple.Json) *simple.Json  {
+	m, _ := sj.Map()
+
+	for k := range m {
+		if strings.ToLower(k) == strings.ToLower(key) {
+			key = k
+			break
+		}
+	}
+
+	return sj.Get(key)
+}
+
 
 func (j *jsonValues) Del(path ...string) {
 	// delete the tree?
@@ -53,7 +69,7 @@ func (j *jsonValues) Del(path ...string) {
 		return
 	}
 
-	vals := j.sj.GetPath(path[:len(path)-1]...)
+	vals := j.getPath(path[:len(path)-1]...)
 	vals.Del(path[len(path)-1])
 	j.sj.SetPath(path[:len(path)-1], vals.Interface())
 	return
@@ -85,82 +101,160 @@ func (j *jsonValues) String() string {
 	return "json"
 }
 
-func (j *jsonValue) Bool(def bool) bool {
+func (j *jsonValue) Bool(def ...bool) bool {
 	b, err := j.Json.Bool()
 	if err == nil {
 		return b
 	}
 
+	vDef := false
+
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+
 	str, ok := j.Interface().(string)
 	if !ok {
-		return def
+		return vDef
 	}
 
 	b, err = strconv.ParseBool(str)
 	if err != nil {
-		return def
+		return vDef
 	}
 
 	return b
 }
 
-func (j *jsonValue) Int(def int) int {
+func (j *jsonValue) Int(def ...int) int {
 	i, err := j.Json.Int()
 	if err == nil {
 		return i
 	}
 
+	vDef := 0
+	if len(def) > 0 {
+		vDef = def[0]
+	}
 	str, ok := j.Interface().(string)
 	if !ok {
-		return def
+		return vDef
 	}
 
 	i, err = strconv.Atoi(str)
 	if err != nil {
-		return def
+		return vDef
 	}
 
 	return i
 }
 
-func (j *jsonValue) String(def string) string {
-	return j.Json.MustString(def)
+func (j *jsonValue) Int64(def ...int64) int64 {
+	i, err := j.Json.Int64()
+	if err == nil {
+		return i
+	}
+
+	var vDef int64 = 0
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+
+	str, ok := j.Interface().(string)
+	if !ok {
+		return vDef
+	}
+
+	i, err = strconv.ParseInt(str, 10, 0)
+	if err != nil {
+		return vDef
+	}
+
+	return i
 }
 
-func (j *jsonValue) Float64(def float64) float64 {
+func (j *jsonValue) Int32(def ...int32) int32 {
+	var vDef int32 = 0
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+	return int32(j.Int64(int64(vDef)))
+}
+
+func (j *jsonValue) Int8(def ...int8) int8 {
+	var vDef int8 = 0
+
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+	return int8(j.Int64(int64(vDef)))
+}
+
+func (j *jsonValue) String(def ...string) string {
+	vDef := ""
+
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+
+	return j.Json.MustString(vDef)
+}
+
+func (j *jsonValue) Float64(def ...float64) float64 {
 	f, err := j.Json.Float64()
 	if err == nil {
 		return f
 	}
 
+	vDef := 0.0
+
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+
 	str, ok := j.Interface().(string)
 	if !ok {
-		return def
+		return vDef
 	}
 
 	f, err = strconv.ParseFloat(str, 64)
 	if err != nil {
-		return def
+		return vDef
 	}
 
 	return f
 }
 
-func (j *jsonValue) Duration(def time.Duration) time.Duration {
+func (j *jsonValue) Float32(def ...float32) float32 {
+	var vDef float32 = 0.0
+
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+
+	return float32(j.Float64(float64(vDef)))
+}
+
+func (j *jsonValue) Duration(def ...time.Duration) time.Duration {
 	v, err := j.Json.String()
+
+	vDef := time.Duration(0)
+	if len(def) > 0 {
+		vDef = def[0]
+	}
 	if err != nil {
-		return def
+		return vDef
 	}
 
 	value, err := time.ParseDuration(v)
 	if err != nil {
-		return def
+		return vDef
 	}
 
 	return value
 }
 
-func (j *jsonValue) StringSlice(def []string) []string {
+func (j *jsonValue) StringSlice(def ...[]string) []string {
 	v, err := j.Json.String()
 	if err == nil {
 		sl := strings.Split(v, ",")
@@ -168,13 +262,27 @@ func (j *jsonValue) StringSlice(def []string) []string {
 			return sl
 		}
 	}
-	return j.Json.MustStringArray(def)
+
+	var vDef []string
+	if len(def) > 0 {
+		vDef = def[0]
+	}
+	if err != nil {
+		return vDef
+	}
+
+	return j.Json.MustStringArray(vDef)
 }
 
-func (j *jsonValue) StringMap(def map[string]string) map[string]string {
+func (j *jsonValue) StringMap(def ...map[string]string) map[string]string {
 	m, err := j.Json.Map()
+
+	vDef := map[string]string{}
+	if len(def) > 0 {
+		vDef = def[0]
+	}
 	if err != nil {
-		return def
+		return vDef
 	}
 
 	res := map[string]string{}

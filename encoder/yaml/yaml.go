@@ -2,20 +2,34 @@ package yaml
 
 import (
 	"github.com/ghodss/yaml"
-	"github.com/micro/go-config/encoder"
+	"github.com/goasana/config/encoder"
 )
+
+func init() {
+	e := NewEncoder()
+	encoder.Register(e.String(), e)
+	encoder.Register("yml", e)
+}
 
 type yamlEncoder struct{}
 
-func (y yamlEncoder) Encode(v interface{}) ([]byte, error) {
+func Encode(v interface{}) ([]byte, error) {
 	return yaml.Marshal(v)
 }
 
-func (y yamlEncoder) Decode(d []byte, v interface{}) error {
+func (j yamlEncoder) Encode(v interface{}, hasIndent ...bool) ([]byte, error) {
+	return Encode(v)
+}
+
+func Decode(d []byte, v interface{}) error {
 	return yaml.Unmarshal(d, v)
 }
 
-func (y yamlEncoder) String() string {
+func (j yamlEncoder) Decode(d []byte, v interface{}) error {
+	return Decode(d, v)
+}
+
+func (j yamlEncoder) String() string {
 	return "yaml"
 }
 

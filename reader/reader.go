@@ -4,7 +4,7 @@ package reader
 import (
 	"time"
 
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/source"
 )
 
 // Reader is an interface for merging changesets
@@ -24,13 +24,17 @@ type Values interface {
 
 // Value represents a value of any type
 type Value interface {
-	Bool(def bool) bool
-	Int(def int) int
-	String(def string) string
-	Float64(def float64) float64
-	Duration(def time.Duration) time.Duration
-	StringSlice(def []string) []string
-	StringMap(def map[string]string) map[string]string
+	Bool(def ...bool) bool
+	Int(def ...int) int
+	Int8(def ...int8) int8
+	Int32(def ...int32) int32
+	Int64(def ...int64) int64
+	String(def ...string) string
+	Float64(def ...float64) float64
+	Float32(def ...float32) float32
+	Duration(def ...time.Duration) time.Duration
+	StringSlice(def ...[]string) []string
+	StringMap(def ...map[string]string) map[string]string
 	Scan(val interface{}) error
 	Bytes() []byte
 }

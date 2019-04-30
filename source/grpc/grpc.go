@@ -3,11 +3,12 @@ package grpc
 import (
 	"context"
 	"crypto/tls"
-	"google.golang.org/grpc/credentials"
 
-	"github.com/micro/go-config/source"
-	proto "github.com/micro/go-config/source/grpc/proto"
+	"github.com/goasana/config/source"
+	proto "github.com/goasana/config/source/grpc/proto"
+
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type grpcSource struct {
@@ -19,7 +20,7 @@ type grpcSource struct {
 }
 
 var (
-	DefaultPath    = "/micro/config"
+	DefaultPath    = "/asana/config"
 	DefaultAddress = "localhost:8080"
 )
 

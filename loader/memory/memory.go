@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/micro/go-config/loader"
-	"github.com/micro/go-config/reader"
-	"github.com/micro/go-config/reader/json"
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/loader"
+	"github.com/goasana/config/reader"
+	"github.com/goasana/config/reader/json"
+	"github.com/goasana/config/source"
 )
 
 type memory struct {
@@ -95,7 +95,7 @@ func (m *memory) watch(idx int, s source.Source) {
 			case <-done:
 			case <-m.exit:
 			}
-			w.Stop()
+			_ = w.Stop()
 		}()
 
 		// block watch
@@ -288,12 +288,12 @@ func (m *memory) Get(path ...string) (reader.Value, error) {
 }
 
 func (m *memory) Load(sources ...source.Source) error {
-	var gerrors []string
+	var gErrors []string
 
 	for _, source := range sources {
 		set, err := source.Read()
 		if err != nil {
-			gerrors = append(gerrors,
+			gErrors = append(gErrors,
 				fmt.Sprintf("error loading source %s: %v",
 					source,
 					err))
@@ -309,12 +309,12 @@ func (m *memory) Load(sources ...source.Source) error {
 	}
 
 	if err := m.reload(); err != nil {
-		gerrors = append(gerrors, err.Error())
+		gErrors = append(gErrors, err.Error())
 	}
 
 	// Return errors
-	if len(gerrors) != 0 {
-		return errors.New(strings.Join(gerrors, "\n"))
+	if len(gErrors) != 0 {
+		return errors.New(strings.Join(gErrors, "\n"))
 	}
 	return nil
 }

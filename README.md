@@ -1,4 +1,4 @@
-# Config [![GoDoc](https://godoc.org/github.com/micro/go-config?status.svg)](https://godoc.org/github.com/micro/go-config)
+# Config [![GoDoc](https://godoc.org/github.com/goasana/config?status.svg)](https://godoc.org/github.com/goasana/config)
 
 Go Config is a pluggable dynamic config library.
 
@@ -25,5 +25,4 @@ values when accessing any config values directly. This ensures you'll always be 
 
 ## Getting Started
 
-For detailed information or architecture, installation and general usage see the [docs](https://micro.mu/docs/go-config.html)
 

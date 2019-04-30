@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/source"
 )
 
 func TestEnv_Read(t *testing.T) {
@@ -48,15 +48,15 @@ func TestEnvvar_Prefixes(t *testing.T) {
 	os.Setenv("APP_DATABASE_HOST", "localhost")
 	os.Setenv("APP_DATABASE_PASSWORD", "password")
 	os.Setenv("VAULT_ADDR", "vault:1337")
-	os.Setenv("MICRO_REGISTRY", "mdns")
+	os.Setenv("ASANA_REGISTRY", "mdns")
 
 	var prefixtests = []struct {
 		prefixOpts   []source.Option
 		expectedKeys []string
 	}{
-		{[]source.Option{WithPrefix("APP", "MICRO")}, []string{"app", "micro"}},
-		{[]source.Option{WithPrefix("MICRO"), WithStrippedPrefix("APP")}, []string{"database", "micro"}},
-		{[]source.Option{WithPrefix("MICRO"), WithStrippedPrefix("APP")}, []string{"database", "micro"}},
+		{[]source.Option{WithPrefix("APP", "ASANA")}, []string{"app", "asana"}},
+		{[]source.Option{WithPrefix("ASANA"), WithStrippedPrefix("APP")}, []string{"database", "asana"}},
+		{[]source.Option{WithPrefix("ASANA"), WithStrippedPrefix("APP")}, []string{"database", "asana"}},
 	}
 
 	for _, pt := range prefixtests {
@@ -86,7 +86,7 @@ func TestEnvvar_Prefixes(t *testing.T) {
 }
 
 func TestEnvvar_WatchNextNoOpsUntilStop(t *testing.T) {
-	source := NewSource(WithStrippedPrefix("GOMICRO_"))
+	source := NewSource(WithStrippedPrefix("GOASANA_"))
 	w, err := source.Watch()
 	if err != nil {
 		t.Error(err)

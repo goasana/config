@@ -6,7 +6,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/source"
+
 	cetcd "go.etcd.io/etcd/clientv3"
 	"go.etcd.io/etcd/mvcc/mvccpb"
 )
@@ -21,7 +22,7 @@ type etcd struct {
 }
 
 var (
-	DefaultPrefix = "/micro/config/"
+	DefaultPrefix = "/asana/config/"
 )
 
 func (c *etcd) Read() (*source.ChangeSet, error) {

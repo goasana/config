@@ -4,7 +4,7 @@ The gRPC source reads from a gRPC server
 
 ## Server
 
-A gRPC source server should implement the [`Source`](https://github.com/micro/go-config/blob/master/source/grpc/proto/grpc.proto#L3L6) proto interface.
+A gRPC source server should implement the [`Source`](https://github.com/goasana/config/blob/master/source/grpc/proto/grpc.proto#L3L6) proto interface.
 
 ```
 service Source {
@@ -21,7 +21,7 @@ Specify source with address and path
 source := grpc.NewSource(
 	// optionally specify server address; default to localhost:8080
 	grpc.WithAddress("10.0.0.10:8500"),
-	// optionally specify a path; defaults to /micro/config
+	// optionally specify a path; defaults to /asana/config
 	grpc.WithPath("/my/config/path"),
 )
 ```

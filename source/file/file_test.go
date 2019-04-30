@@ -16,8 +16,8 @@ func TestFile(t *testing.T) {
 		t.Error(err)
 	}
 	defer func() {
-		fh.Close()
-		os.Remove(path)
+		_ = fh.Close()
+		_ = os.Remove(path)
 	}()
 
 	_, err = fh.Write(data)

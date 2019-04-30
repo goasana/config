@@ -5,11 +5,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/micro/go-config/loader"
-	"github.com/micro/go-config/loader/memory"
-	"github.com/micro/go-config/reader"
-	"github.com/micro/go-config/reader/json"
-	"github.com/micro/go-config/source"
+	"github.com/goasana/config/loader"
+	"github.com/goasana/config/loader/memory"
+	"github.com/goasana/config/reader"
+	"github.com/goasana/config/reader/json"
+	"github.com/goasana/config/source"
 )
 
 type config struct {
@@ -40,7 +40,7 @@ func newConfig(opts ...Option) Config {
 		o(&options)
 	}
 
-	options.Loader.Load(options.Source...)
+	_ = options.Loader.Load(options.Source...)
 	snap, _ := options.Loader.Snapshot()
 	vals, _ := options.Reader.Values(snap.ChangeSet)
 
@@ -92,7 +92,7 @@ func (c *config) run() {
 			case <-done:
 			case <-c.exit:
 			}
-			w.Stop()
+			_ = w.Stop()
 		}()
 
 		// block watch

@@ -3,7 +3,7 @@ package vault
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/micro/go-config"
+	"github.com/goasana/config"
 	"os"
 	"reflect"
 	"strings"

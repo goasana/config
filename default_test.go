@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/micro/go-config/source/file"
+	"github.com/goasana/config/source/file"
 )
 
 func createFileForTest(t *testing.T) *os.File {
@@ -30,8 +30,8 @@ func TestLoadWithGoodFile(t *testing.T) {
 	fh := createFileForTest(t)
 	path := fh.Name()
 	defer func() {
-		fh.Close()
-		os.Remove(path)
+		_ = fh.Close()
+		_ = os.Remove(path)
 	}()
 
 	// Create new config
@@ -48,8 +48,8 @@ func TestLoadWithInvalidFile(t *testing.T) {
 	fh := createFileForTest(t)
 	path := fh.Name()
 	defer func() {
-		fh.Close()
-		os.Remove(path)
+		_ = fh.Close()
+		_ = os.Remove(path)
 	}()
 
 	// Create new config
@@ -72,7 +72,7 @@ func TestConsul(t *testing.T) {
 	/*consulSource := consul.NewSource(
 		// optionally specify consul address; default to localhost:8500
 		consul.WithAddress("131.150.38.111:8500"),
-		// optionally specify prefix; defaults to /micro/config
+		// optionally specify prefix; defaults to /asana/config
 		consul.WithPrefix("/project"),
 		// optionally strip the provided prefix from the keys, defaults to false
 		consul.StripPrefix(true),

@@ -4,14 +4,14 @@ The configmap source reads config from a kubernetes configmap key/values
 
 ## Kubernetes ConfigMap Format
 
-The configmap source expects keys under a namespace default to `default` and a confimap default to `micro`
+The configmap source expects keys under a namespace default to `default` and a confimap default to `asana`
 
 ```shell
 // we recommend to setup your variables from multiples files example:
-$ kubectl create configmap micro --namespace default --from-file=./testdata
+$ kubectl create configmap asana --namespace default --from-file=./testdata
 
 // verify if were set correctly with
-$ kubectl get configmap micro --namespace default
+$ kubectl get configmap asana --namespace default
 {
     "apiVersion": "v1",
     "data": {
@@ -22,7 +22,7 @@ $ kubectl get configmap micro --namespace default
     "kind": "ConfigMap",
     "metadata": {
         ...
-        "name": "micro",
+        "name": "asana",
         "namespace": "default",
         ...
     }
@@ -45,8 +45,8 @@ Specify source with data
 configmapSource := configmap.NewSource(
 	// optionally specify a namespace; default to default
 	configmap.WithNamespace("kube-public"),
-	// optionally specify name for ConfigMap; defaults micro
-	configmap.WithName("micro-config"),
+	// optionally specify name for ConfigMap; defaults asana
+	configmap.WithName("asana-config"),
     // optionally strip the provided path to a kube config file mostly used outside of a cluster, defaults to "" for in cluster support.
     configmap.WithConfigPath($HOME/.kube/config),
 )
@@ -73,17 +73,17 @@ Have a kubernetes cluster running (external or minikube) have a valid `kubeconfi
 ```shell
 // Setup testing configmaps feel free to remove them after testing.
 $ cd source/configmap
-$ kubectl create configmap micro --from-file=./testdata
-$ kubectl create configmap micro --from-file=./testdata --namespace kube-public
-$ kubectl create configmap micro-config --from-file=./testdata
-$ kubectl create configmap micro-config --from-file=./testdata --namespace kube-public
+$ kubectl create configmap asana --from-file=./testdata
+$ kubectl create configmap asana --from-file=./testdata --namespace kube-public
+$ kubectl create configmap asana-config --from-file=./testdata
+$ kubectl create configmap asana-config --from-file=./testdata --namespace kube-public
 $ go test -v -cover
 ```
 
 ```shell
 // To clean up the testing configmaps
-$ kubectl delete configmap micro --all-namespaces
-$ kubectl delete configmap micro-config --all-namespaces
+$ kubectl delete configmap asana --all-namespaces
+$ kubectl delete configmap asana-config --all-namespaces
 ```
 
 ## Todos

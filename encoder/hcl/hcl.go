@@ -1,20 +1,32 @@
 package hcl
 
 import (
-	"encoding/json"
-
+	"github.com/goasana/config/encoder"
+	"github.com/goasana/config/encoder/json"
 	"github.com/hashicorp/hcl"
-	"github.com/micro/go-config/encoder"
 )
+
+func init()  {
+	e := NewEncoder()
+	encoder.Register(e.String(), e)
+}
 
 type hclEncoder struct{}
 
-func (h hclEncoder) Encode(v interface{}) ([]byte, error) {
-	return json.Marshal(v)
+func Encode(v interface{}, hasIndent bool) ([]byte, error) {
+	return json.Encode(v, hasIndent)
+}
+
+func (h hclEncoder) Encode(v interface{}, hasIndent ...bool) ([]byte, error) {
+	return Encode(v, len(hasIndent) > 0 && hasIndent[0])
+}
+
+func Decode(d []byte, v interface{}) error {
+	return hcl.Unmarshal(d, v)
 }
 
 func (h hclEncoder) Decode(d []byte, v interface{}) error {
-	return hcl.Unmarshal(d, v)
+	return Decode(d, v)
 }
 
 func (h hclEncoder) String() string {

@@ -3,7 +3,7 @@ package file
 import (
 	"strings"
 
-	"github.com/micro/go-config/encoder"
+	"github.com/goasana/config/encoder"
 )
 
 func format(p string, e encoder.Encoder) string {

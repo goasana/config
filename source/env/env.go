@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/goasana/config/source"
 	"github.com/imdario/mergo"
-	"github.com/micro/go-config/source"
 )
 
 var (
-	DefaultPrefixes = []string{}
+	DefaultPrefixes []string
 )
 
 type env struct {

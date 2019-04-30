@@ -4,10 +4,10 @@ package config
 import (
 	"context"
 
-	"github.com/micro/go-config/loader"
-	"github.com/micro/go-config/reader"
-	"github.com/micro/go-config/source"
-	"github.com/micro/go-config/source/file"
+	"github.com/goasana/config/loader"
+	"github.com/goasana/config/reader"
+	"github.com/goasana/config/source"
+	"github.com/goasana/config/source/file"
 )
 
 // Config is an interface abstraction for dynamic configuration

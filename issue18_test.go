@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/micro/go-config/source/env"
-	"github.com/micro/go-config/source/file"
+	"github.com/goasana/config/source/env"
+	"github.com/goasana/config/source/file"
 )
 
 func createFileForIssue18(t *testing.T, content string) *os.File {
@@ -38,13 +38,13 @@ func TestIssue18(t *testing.T) {
 }`)
 	path := fh.Name()
 	defer func() {
-		fh.Close()
-		os.Remove(path)
+		_ = fh.Close()
+		_ = os.Remove(path)
 	}()
-	os.Setenv("AMQP_HOST", "rabbit.testing.com")
+	_ = os.Setenv("AMQP_HOST", "rabbit.testing.com")
 
 	conf := NewConfig()
-	conf.Load(
+	_ = conf.Load(
 		file.NewSource(
 			file.WithPath(path),
 		),
