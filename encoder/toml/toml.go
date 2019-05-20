@@ -12,6 +12,8 @@ func init() {
 	encoder.Register(e.String(), e)
 }
 
+const TOML encoder.Provider =  "toml"
+
 type tomlEncoder struct{}
 
 func Encode(v interface{}) ([]byte, error) {
@@ -36,8 +38,8 @@ func (t tomlEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (t tomlEncoder) String() string {
-	return "toml"
+func (t tomlEncoder) String() encoder.Provider {
+	return TOML
 }
 
 func NewEncoder() encoder.Encoder {

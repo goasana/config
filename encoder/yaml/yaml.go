@@ -8,8 +8,11 @@ import (
 func init() {
 	e := NewEncoder()
 	encoder.Register(e.String(), e)
-	encoder.Register("yml", e)
+	encoder.Register(YML, e)
 }
+
+const YAML encoder.Provider =  "yaml"
+const YML encoder.Provider =  "yml"
 
 type yamlEncoder struct{}
 
@@ -29,8 +32,8 @@ func (j yamlEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (j yamlEncoder) String() string {
-	return "yaml"
+func (j yamlEncoder) String() encoder.Provider {
+	return YAML
 }
 
 func NewEncoder() encoder.Encoder {
