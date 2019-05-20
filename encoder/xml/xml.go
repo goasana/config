@@ -11,8 +11,6 @@ func init() {
 	encoder.Register(e.String(), e)
 }
 
-const XML encoder.Provider =  "xml"
-
 type xmlEncoder struct{}
 
 func Encode(v interface{}, hasIndent bool) ([]byte, error) {
@@ -35,7 +33,7 @@ func (j xmlEncoder) Decode(d []byte, v interface{}) error {
 }
 
 func (j xmlEncoder) String() encoder.Provider {
-	return XML
+	return encoder.XML
 }
 
 func NewEncoder() encoder.Encoder {

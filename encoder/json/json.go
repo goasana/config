@@ -10,8 +10,6 @@ func init()  {
 	encoder.Register(e.String(), e)
 }
 
-const JSON encoder.Provider =  "json"
-
 type jsonEncoder struct{}
 
 func Encode(v interface{}, hasIndent bool) ([]byte, error) {
@@ -35,7 +33,7 @@ func (j jsonEncoder) Decode(d []byte, v interface{}) error {
 }
 
 func (j jsonEncoder) String() encoder.Provider {
-	return JSON
+	return encoder.JSON
 }
 
 func NewEncoder() encoder.Encoder {

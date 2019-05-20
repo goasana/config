@@ -6,8 +6,6 @@ import (
 	"github.com/hashicorp/hcl"
 )
 
-const HCL encoder.Provider =  "hcl"
-
 func init()  {
 	e := NewEncoder()
 	encoder.Register(e.String(), e)
@@ -32,7 +30,7 @@ func (h hclEncoder) Decode(d []byte, v interface{}) error {
 }
 
 func (h hclEncoder) String() encoder.Provider {
-	return HCL
+	return encoder.HCL
 }
 
 func NewEncoder() encoder.Encoder {

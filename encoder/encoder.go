@@ -4,6 +4,17 @@ var encoders = make(map[Provider]Encoder)
 
 type Provider string
 
+const (
+	HCL   Provider = "hcl"
+	HJSON          = "hjson"
+	JSON           = "json"
+	PROTO          = "proto"
+	TOML           = "toml"
+	XML            = "xml"
+	YAML           = "yaml"
+	YML            = "yml"
+)
+
 type Encoder interface {
 	Encode(interface{}, ...bool) ([]byte, error)
 	Decode([]byte, interface{}) error

@@ -10,8 +10,6 @@ func init() {
 	encoder.Register(e.String(), e)
 }
 
-const PROTO encoder.Provider =  "proto"
-
 type protoEncoder struct{}
 
 func Encode(v interface{}) ([]byte, error) {
@@ -31,7 +29,7 @@ func (p protoEncoder) Decode(d []byte, v interface{}) error {
 }
 
 func (p protoEncoder) String() encoder.Provider {
-	return PROTO
+	return encoder.PROTO
 }
 
 func NewEncoder() encoder.Encoder {
