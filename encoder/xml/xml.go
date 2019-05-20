@@ -32,7 +32,7 @@ func (j xmlEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (j xmlEncoder) String() encoder.Provider {
+func (j xmlEncoder) String() string {
 	return encoder.XML
 }
 

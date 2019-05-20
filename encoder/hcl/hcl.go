@@ -29,7 +29,7 @@ func (h hclEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (h hclEncoder) String() encoder.Provider {
+func (h hclEncoder) String() string {
 	return encoder.HCL
 }
 

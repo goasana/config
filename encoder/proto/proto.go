@@ -28,7 +28,7 @@ func (p protoEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (p protoEncoder) String() encoder.Provider {
+func (p protoEncoder) String() string {
 	return encoder.PROTO
 }
 

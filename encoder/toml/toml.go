@@ -36,7 +36,7 @@ func (t tomlEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (t tomlEncoder) String() encoder.Provider {
+func (t tomlEncoder) String() string {
 	return encoder.TOML
 }
 

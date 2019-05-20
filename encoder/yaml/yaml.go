@@ -29,7 +29,7 @@ func (j yamlEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (j yamlEncoder) String() encoder.Provider {
+func (j yamlEncoder) String() string {
 	return encoder.YAML
 }
 

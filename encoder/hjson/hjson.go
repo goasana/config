@@ -31,7 +31,7 @@ func (j hJsonEncoder) Decode(d []byte, v interface{}) error {
 	return Decode(d, v)
 }
 
-func (j hJsonEncoder) String() encoder.Provider {
+func (j hJsonEncoder) String() string {
 	return encoder.HJSON
 }
 
