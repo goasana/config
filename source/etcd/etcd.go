@@ -79,7 +79,7 @@ func (c *etcd) Watch() (source.Watcher, error) {
 func NewSource(opts ...source.Option) source.Source {
 	options := source.NewOptions(opts...)
 
-	endpoints := []string{"localhost:2379"}
+	var endpoints []string
 
 	// check if there are any addrs
 	addrs, ok := options.Context.Value(addressKey{}).([]string)
@@ -89,11 +89,15 @@ func NewSource(opts ...source.Option) source.Source {
 			if ae, ok := err.(*net.AddrError); ok && ae.Err == "missing port in address" {
 				port = "2379"
 				addr = a
-				endpoints = []string{fmt.Sprintf("%s:%s", addr, port)}
+				endpoints = append(endpoints, fmt.Sprintf("%s:%s", addr, port))
 			} else if err == nil {
-				endpoints = []string{fmt.Sprintf("%s:%s", addr, port)}
+				endpoints = append(endpoints, fmt.Sprintf("%s:%s", addr, port))
 			}
 		}
+	}
+
+	if len(endpoints) == 0 {
+		endpoints = []string{"localhost:2379"}
 	}
 
 	config := cetcd.Config{
