@@ -17,7 +17,7 @@ type authCreds struct {
 }
 
 // WithAddress sets the consul address
-func WithAddress(a string) source.Option {
+func WithAddress(a ...string) source.Option {
 	return func(o *source.Options) {
 		if o.Context == nil {
 			o.Context = context.Background()
