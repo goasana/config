@@ -13,33 +13,10 @@
 // limitations under the License.
 
 // Package runtimevar provides an easy and portable way to watch runtime
-// configuration variables.
+// configuration variables. Subpackages contain driver implementations of
+// runtimevar for supported services.
 //
-// It provides a blocking method that returns a Snapshot of the variable value
-// whenever a change is detected.
-//
-// Subpackages contain distinct implementations of runtimevar for various
-// providers, including Cloud and on-premise solutions. For example, "etcdvar"
-// supports variables stored in etcd. Your application should import one of
-// these provider-specific subpackages and use its exported function(s) to
-// create a *Variable; do not use the New function in this package. For example:
-//
-//  var v *runtimevar.Variable
-//  var err error
-//  v, err = etcdvar.New("my variable", etcdClient, runtimevar.JSONDecode, nil)
-//  ...
-//
-// Then, write your application code using the *Variable type. You can
-// easily reconfigure your initialization code to choose a different provider.
-// You can develop your application locally using filevar or constantvar, and
-// deploy it to multiple Cloud providers. You may find
-// http://github.com/google/wire useful for managing your initialization code.
-//
-// Variable implements health.Checker; it reports as healthy when Latest will
-// return a value without blocking.
-//
-// Alternatively, you can construct a *Variable via a URL and OpenVariable.
-// See https://gocloud.dev/concepts/urls/ for more information.
+// See https://gocloud.dev/howto/runtimevar/ for a detailed how-to guide.
 //
 //
 // OpenCensus Integration
@@ -48,7 +25,7 @@
 // backend providers. See https://opencensus.io.
 //
 // This API collects an OpenCensus metric "gocloud.dev/runtimevar/value_changes",
-// a count of the number of times all variables have changed values, by provider.
+// a count of the number of times all variables have changed values, by driver.
 //
 // To enable metric collection in your application, see "Exporting stats" at
 // https://opencensus.io/quickstart/go/metrics.
@@ -82,8 +59,7 @@ import (
 // It is intended to be read-only for users.
 type Snapshot struct {
 	// Value contains the value of the variable.
-	// The type for Value depends on the provider; for most providers, it depends
-	// on the decoder used when creating Variable.
+	// The type for Value depends on the decoder used when creating the Variable.
 	Value interface{}
 
 	// UpdateTime is the time when the last change was detected.
@@ -92,10 +68,10 @@ type Snapshot struct {
 	asFunc func(interface{}) bool
 }
 
-// As converts i to provider-specific types.
+// As converts i to driver-specific types.
 // See https://gocloud.dev/concepts/as/ for background information, the "As"
-// examples in this package for examples, and the provider-specific package
-// documentation for the specific types supported for that provider.
+// examples in this package for examples, and the driver package
+// documentation for the specific types supported for that driver.
 func (s *Snapshot) As(i interface{}) bool {
 	if s.asFunc == nil {
 		return false
@@ -113,7 +89,7 @@ var (
 		{
 			Name:        pkgName + "/value_changes",
 			Measure:     changeMeasure,
-			Description: "Count of variable value changes by provider.",
+			Description: "Count of variable value changes by driver.",
 			TagKeys:     []tag.Key{oc.ProviderKey},
 			Aggregation: view.Count(),
 		},
@@ -121,18 +97,17 @@ var (
 )
 
 // Variable provides an easy and portable way to watch runtime configuration
-// variables. To create a Variable, use constructors found in provider-specific
-// subpackages.
+// variables. To create a Variable, use constructors found in driver subpackages.
 type Variable struct {
 	dw       driver.Watcher
-	provider string // for metric collection
+	provider string // for metric collection; refers to driver package name
 
 	// For cancelling the background goroutine, and noticing when it has exited.
 	backgroundCancel context.CancelFunc
 	backgroundDone   chan struct{}
 
-	// haveGood is closed when we get the first good value for the variable.
-	haveGood chan struct{}
+	// haveGoodCh is closed when we get the first good value for the variable.
+	haveGoodCh chan struct{}
 	// A reference to changed at the last time Watch was called.
 	// Not protected by mu because it's only referenced in Watch, which is not
 	// supposed to be called from multiple goroutines.
@@ -145,7 +120,7 @@ type Variable struct {
 	lastGood Snapshot
 }
 
-// New is intended for use by provider implementations.
+// New is intended for use by drivers only. Do not use in application code.
 var New = newVar
 
 // newVar creates a new *Variable based on a specific driver implementation.
@@ -157,7 +132,7 @@ func newVar(w driver.Watcher) *Variable {
 		provider:         oc.ProviderName(w),
 		backgroundCancel: cancel,
 		backgroundDone:   make(chan struct{}),
-		haveGood:         make(chan struct{}),
+		haveGoodCh:       make(chan struct{}),
 		changed:          changed,
 		lastWatch:        changed,
 		lastErr:          gcerr.Newf(gcerr.FailedPrecondition, nil, "no value yet"),
@@ -173,7 +148,7 @@ var ErrClosed = gcerr.Newf(gcerr.FailedPrecondition, nil, "Variable has been Clo
 // variable.
 //
 // The first call to Watch will block while reading the variable from the
-// provider, and will return the resulting Snapshot or error. If an error is
+// driver, and will return the resulting Snapshot or error. If an error is
 // returned, the returned Snapshot is a zero value and should be ignored.
 // Subsequent calls will block until the variable's value changes or a different
 // error occurs.
@@ -248,11 +223,11 @@ func (c *Variable) background(ctx context.Context) {
 			}
 			c.lastErr = nil
 			c.lastGood = c.last
-			// Close c.haveGood if it's not already closed.
+			// Close c.haveGoodCh if it's not already closed.
 			select {
-			case <-c.haveGood:
+			case <-c.haveGoodCh:
 			default:
-				close(c.haveGood)
+				close(c.haveGoodCh)
 			}
 		} else {
 			// We got an error value.
@@ -265,6 +240,15 @@ func (c *Variable) background(ctx context.Context) {
 	}
 }
 
+func (c *Variable) haveGood() bool {
+	select {
+	case <-c.haveGoodCh:
+		return true
+	default:
+		return false
+	}
+}
+
 // Latest is intended to be called per request, with the request context.
 // It returns the latest good Snapshot of the variable value, blocking if no
 // good value has ever been received. If ctx is Done, it returns the latest
@@ -273,12 +257,14 @@ func (c *Variable) background(ctx context.Context) {
 //
 // Latest returns ErrClosed if the Variable has been closed.
 func (c *Variable) Latest(ctx context.Context) (Snapshot, error) {
-	var haveGood bool
-	select {
-	case <-c.haveGood:
-		haveGood = true
-	case <-ctx.Done():
-		// We don't return ctx.Err().
+	haveGood := c.haveGood()
+	if !haveGood {
+		select {
+		case <-c.haveGoodCh:
+			haveGood = true
+		case <-ctx.Done():
+			// We don't return ctx.Err().
+		}
 	}
 	c.mu.RLock()
 	defer c.mu.RUnlock()
@@ -291,12 +277,7 @@ func (c *Variable) Latest(ctx context.Context) (Snapshot, error) {
 // CheckHealth returns an error unless Latest will return a good value
 // without blocking.
 func (c *Variable) CheckHealth() error {
-	haveGood := false
-	select {
-	case <-c.haveGood:
-		haveGood = true
-	default:
-	}
+	haveGood := c.haveGood()
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	if haveGood && c.lastErr != ErrClosed {
@@ -318,11 +299,11 @@ func (c *Variable) Close() error {
 
 	// Close any remaining channels to wake up any callers that are waiting on them.
 	close(c.changed)
-	// If it's the first good value, close haveGood so that Latest doesn't block.
+	// If it's the first good value, close haveGoodCh so that Latest doesn't block.
 	select {
-	case <-c.haveGood:
+	case <-c.haveGoodCh:
 	default:
-		close(c.haveGood)
+		close(c.haveGoodCh)
 	}
 	c.mu.Unlock()
 
@@ -345,7 +326,7 @@ func wrapError(w driver.Watcher, err error) error {
 	return gcerr.New(w.ErrorCode(err), err, 2, "runtimevar")
 }
 
-// ErrorAs converts err to provider-specific types.
+// ErrorAs converts err to driver-specific types.
 // ErrorAs panics if i is nil or not a pointer.
 // ErrorAs returns false if err == nil.
 // See https://gocloud.dev/concepts/as/ for background information.
@@ -414,7 +395,7 @@ func DefaultURLMux() *URLMux {
 }
 
 // OpenVariable opens the variable identified by the URL given.
-// See the URLOpener documentation in provider-specific subpackages for
+// See the URLOpener documentation in driver subpackages for
 // details on supported URL formats, and https://gocloud.dev/concepts/urls
 // for more information.
 func OpenVariable(ctx context.Context, urlstr string) (*Variable, error) {
