@@ -2,10 +2,11 @@ package vault
 
 import (
 	"fmt"
-	"github.com/goasana/config/source"
 	"net"
 	"net/url"
 	"strings"
+
+	"github.com/goasana/config/source"
 )
 
 func makeMap(kv map[string]interface{}, secretName string) (map[string]interface{}, error) {

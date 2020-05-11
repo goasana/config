@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/goasana/config/source"
+
 	"gocloud.dev/runtimevar"
 )
 

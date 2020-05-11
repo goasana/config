@@ -2,8 +2,9 @@ package vault
 
 import (
 	"errors"
-	"github.com/hashicorp/vault/api"
 	"github.com/goasana/config/source"
+
+	"github.com/hashicorp/vault/api"
 )
 
 type watcher struct {

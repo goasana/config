@@ -2,9 +2,10 @@ package vault
 
 import (
 	"fmt"
-	"github.com/hashicorp/vault/api"
-	"github.com/goasana/config/source"
 	"time"
+
+	"github.com/goasana/config/source"
+	"github.com/hashicorp/vault/api"
 )
 
 // Currently a single vault reader

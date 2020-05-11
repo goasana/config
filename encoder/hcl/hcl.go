@@ -3,10 +3,11 @@ package hcl
 import (
 	"github.com/goasana/config/encoder"
 	"github.com/goasana/config/encoder/json"
+
 	"github.com/hashicorp/hcl"
 )
 
-func init()  {
+func init() {
 	e := NewEncoder()
 	encoder.Register(e.String(), e)
 }
