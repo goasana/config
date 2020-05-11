@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/goasana/config/source/file"
-
 )
 
 func createFileForTest(t *testing.T) *os.File {

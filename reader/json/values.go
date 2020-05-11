@@ -8,9 +8,10 @@ import (
 	"strings"
 	"time"
 
-	simple "github.com/bitly/go-simplejson"
 	"github.com/goasana/config/reader"
 	"github.com/goasana/config/source"
+
+	simple "github.com/bitly/go-simplejson"
 )
 
 type jsonValues struct {
@@ -44,7 +45,7 @@ func (j *jsonValues) getPath(branch ...string) *simple.Json {
 	return jin
 }
 
-func (j *jsonValues) get(key string, sj *simple.Json) *simple.Json  {
+func (j *jsonValues) get(key string, sj *simple.Json) *simple.Json {
 	m, _ := sj.Map()
 
 	for k := range m {
@@ -56,7 +57,6 @@ func (j *jsonValues) get(key string, sj *simple.Json) *simple.Json  {
 
 	return sj.Get(key)
 }
-
 
 func (j *jsonValues) Del(path ...string) {
 	// delete the tree?

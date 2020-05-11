@@ -4,11 +4,12 @@ import (
 	"errors"
 	"time"
 
-	"github.com/imdario/mergo"
 	"github.com/goasana/config/encoder"
 	"github.com/goasana/config/encoder/json"
 	"github.com/goasana/config/reader"
 	"github.com/goasana/config/source"
+
+	"github.com/imdario/mergo"
 )
 
 type jsonReader struct {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/consul/api"
 	"github.com/goasana/config/encoder"
+	"github.com/hashicorp/consul/api"
 )
 
 func makeMap(e encoder.Encoder, kv api.KVPairs, stripPrefix string) (map[string]interface{}, error) {

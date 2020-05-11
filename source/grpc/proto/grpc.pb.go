@@ -271,7 +271,7 @@ func (x *sourceWatchServer) Send(m *WatchResponse) error {
 }
 
 var _Source_serviceDesc = grpc1.ServiceDesc{
-	ServiceName: "Source",
+	ServiceName: "github.com/goasana/config/source",
 	HandlerType: (*SourceServer)(nil),
 	Methods: []grpc1.MethodDesc{
 		{

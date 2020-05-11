@@ -5,7 +5,7 @@ import (
 	"github.com/goasana/config/encoder"
 )
 
-func init()  {
+func init() {
 	e := NewEncoder()
 	encoder.Register(e.String(), e)
 }

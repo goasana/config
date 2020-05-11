@@ -5,8 +5,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/hashicorp/consul/api"
 	"github.com/goasana/config/source"
+	"github.com/hashicorp/consul/api"
 )
 
 // Currently a single consul reader

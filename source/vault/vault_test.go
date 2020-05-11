@@ -3,11 +3,12 @@ package vault
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/goasana/config"
 	"os"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/goasana/config"
 )
 
 func TestVaultMakeMap(t *testing.T) {
@@ -55,18 +56,18 @@ func TestVault_Read(t *testing.T) {
 	}
 
 	var (
-		address = "http://127.0.0.1"
+		address  = "http://127.0.0.1"
 		resource = "secret/data/db/auth"
-		token = "s.Q4Zi0CSowXZl7sh0z96ijcT4"
+		token    = "s.Q4Zi0CSowXZl7sh0z96ijcT4"
 	)
 
 	data := []byte(`{"secret":{"data":{"db":{"auth":{"host":"128.23.33.21","password":"mypassword","port":"3306","user":"myuser"}}}}}`)
 
 	tt := []struct {
-		name      string
+		name     string
 		addr     string
 		resource string
-		token string
+		token    string
 	}{
 		{name: "read data basic", addr: address, resource: resource, token: token},
 		{name: "read data without token", addr: address, resource: resource, token: ""},
